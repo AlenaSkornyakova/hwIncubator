@@ -1,8 +1,8 @@
-import { app } from './settings'
+import { app } from './settings';
 
-const port = process.env.PORT || 3000
+const PORT = process.env.PORT || 5001;
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
-})
-
+// запуск приложения локально
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
+});

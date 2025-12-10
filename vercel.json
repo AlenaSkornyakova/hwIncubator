@@ -1,10 +1,17 @@
 {
   "version": 2,
-  "name": "hwiti",
+  "name": "hwincubator",
   "builds": [
-    { "src": "dist/settings.js", "use": "@vercel/node" }
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "dist/settings.js" }
+    {
+      "src": "/(.*)",
+      "dest": "src/index.ts"
+    }
   ]
 }
+
