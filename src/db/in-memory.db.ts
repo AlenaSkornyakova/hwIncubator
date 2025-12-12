@@ -5,7 +5,7 @@ export type DBType = {
 }
 
 export const db = {
-  videos: <Video[]>[
+  videos:  <Video[]>[
     {
       id: 1,
       title: "string",

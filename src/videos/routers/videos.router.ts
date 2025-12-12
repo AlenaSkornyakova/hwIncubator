@@ -5,7 +5,7 @@ import type { VideoInputDto } from '../dto/video-input.dto';
 import type { VideoOutputDto } from '../dto/video-output.dto';
 import type { DBType } from '../../db/in-memory.db';
 import { HTTP_STATUSES } from '../../core/utils/http-status';
-import { RequestWithQuery, RequestWithBody, RequestWithParams } from '../../core/types/types';
+import {  RequestWithBody, RequestWithParams } from '../../core/types/types';
 import { VideoUpdateInputDto } from '../dto/video-update.input.dto';
 
 export const mapVideo = (dbVideo: Video): VideoOutputDto => {
@@ -13,8 +13,8 @@ export const mapVideo = (dbVideo: Video): VideoOutputDto => {
     id: dbVideo.id,
     title: dbVideo.title,
     author: dbVideo.author,
-    canBeDownloaded: false,
-    minAgeRestriction: null,
+    canBeDownloaded: dbVideo.canBeDownloaded,
+    minAgeRestriction: dbVideo.minAgeRestriction,
     createdAt: dbVideo.createdAt,
     publicationDate: dbVideo.publicationDate,
     availableResolutions: dbVideo.availableResolutions,
@@ -56,6 +56,8 @@ export const videosRouter = (db: DBType) => {
     return res.status(HTTP_STATUSES.OK_200).json(video);
   });
 
+
+
   router.put(
     '/:id',( req: RequestWithParams<{ id: string }> & RequestWithBody<VideoUpdateInputDto>,
       res: Response,) => {
@@ -78,6 +80,8 @@ export const videosRouter = (db: DBType) => {
     },
   );
 
+
+  
   router.delete('/:id', (req: RequestWithParams<{ id: string }>, res: Response) => {
     const id = Number(req.params.id);
     const index = db.videos.findIndex((c) => c.id === id);
