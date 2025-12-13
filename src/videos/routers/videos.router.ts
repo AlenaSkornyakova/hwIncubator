@@ -42,14 +42,18 @@ export const videosRouter = (db: DBType) => {
         return;
       }
 
+      const createdAt = new Date();
+      const publicationDate = new Date(createdAt);
+      publicationDate.setDate(publicationDate.getDate() + 1);
+
       const newVideo: Video = {
         id: +new Date(),
         title: req.body.title,
         author: req.body.author,
         canBeDownloaded: false,
         minAgeRestriction: null,
-        createdAt: new Date().toISOString(),
-        publicationDate: new Date().toISOString(),
+        createdAt: createdAt.toISOString(),
+        publicationDate: publicationDate.toISOString(),
         availableResolutions: req.body.availableResolutions,
       };
 
@@ -87,12 +91,10 @@ export const videosRouter = (db: DBType) => {
           .send(createErrorMessages([{ field: 'id', message: 'Video not found' }]));
       }
 
-     const errors = validateVideoUpdate(req.body);
-     
+      const errors = validateVideoUpdate(req.body);
+
       if (errors.length > 0) {
-        return res
-          .status(HTTP_STATUSES.BAD_REQUEST_400)
-          .send(createErrorMessages( errors ));
+        return res.status(HTTP_STATUSES.BAD_REQUEST_400).send(createErrorMessages(errors));
       }
       video.title = req.body.title;
       video.author = req.body.author;
@@ -105,15 +107,20 @@ export const videosRouter = (db: DBType) => {
     },
   );
 
-  router.delete('/:id', (req: RequestWithParams<{ id: string }>, res: Response<VideoOutputDto | ErrorResponse>) => {
-    const id = Number(req.params.id);
-    const index = db.videos.findIndex((c) => c.id === id);
-    if (index > -1) {
-      db.videos.splice(index, 1);
-      res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
-    } else {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).send(createErrorMessages([{ field: 'id', message: 'Video not found' }]));
-    }
-  });
+  router.delete(
+    '/:id',
+    (req: RequestWithParams<{ id: string }>, res: Response<VideoOutputDto | ErrorResponse>) => {
+      const id = Number(req.params.id);
+      const index = db.videos.findIndex((c) => c.id === id);
+      if (index > -1) {
+        db.videos.splice(index, 1);
+        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+      } else {
+        res
+          .status(HTTP_STATUSES.NOT_FOUND_404)
+          .send(createErrorMessages([{ field: 'id', message: 'Video not found' }]));
+      }
+    },
+  );
   return router;
 };
