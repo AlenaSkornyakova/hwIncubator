@@ -1,10 +1,10 @@
-import type { VideoResolution } from '../types/video';
+import type {VideoResolution} from '../types/video';
 
 export interface VideoUpdateInputDto {
   title: string;
   author: string;
   availableResolutions: VideoResolution[];
   canBeDownloaded: boolean;
-  minAgeRestriction: number;
+  minAgeRestriction: number | null;
   publicationDate: string;
 }

@@ -5,8 +5,12 @@ import type { VideoInputDto } from '../dto/video-input.dto';
 import type { VideoOutputDto } from '../dto/video-output.dto';
 import type { DBType } from '../../db/in-memory.db';
 import { HTTP_STATUSES } from '../../core/utils/http-status';
-import {  RequestWithBody, RequestWithParams } from '../../core/types/types';
+import { RequestWithBody, RequestWithParams } from '../../core/types/requestTypes';
 import { VideoUpdateInputDto } from '../dto/video-update.input.dto';
+import { validateVideoInput } from '../validation/video-input.validation';
+import {validateVideoUpdate} from '../validation/video-update.validation';
+import { createErrorMessages } from '../../core/utils/error.utils';
+import { ErrorResponse } from '../../core/types/validationError';
 
 export const mapVideo = (dbVideo: Video): VideoOutputDto => {
   return {
@@ -28,46 +32,67 @@ export const videosRouter = (db: DBType) => {
     res.status(HTTP_STATUSES.OK_200).json(db.videos.map(mapVideo));
   });
 
-  router.post('/', (req: RequestWithBody<VideoInputDto>, res: Response<VideoOutputDto>) => {
-    if (!req.body.title || !req.body.author || !req.body.availableResolutions) {
-      res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
-      return;
-    }
-    const newVideo: VideoOutputDto = {
-      id: +new Date(),
-      title: req.body.title,
-      author: req.body.author,
-      canBeDownloaded: false,
-      minAgeRestriction: null,
-      createdAt: new Date().toISOString(),
-      publicationDate: new Date().toISOString(),
-      availableResolutions: req.body.availableResolutions,
-    };
-    db.videos.push(newVideo);
-    res.status(HTTP_STATUSES.CREATED_201).json(mapVideo(newVideo));
-  });
+  router.post(
+    '/',
+    (req: RequestWithBody<VideoInputDto>, res: Response<VideoOutputDto | ErrorResponse>) => {
+      const errors = validateVideoInput(req.body);
 
-  router.get('/:id', (req: RequestWithParams<{ id: string }>, res: Response<VideoOutputDto>) => {
-    const id = Number(req.params.id);
-    const video = db.videos.find((v) => v.id === id);
-    if (!video) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-    }
-    return res.status(HTTP_STATUSES.OK_200).json(video);
-  });
+      if (errors.length > 0) {
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send(createErrorMessages(errors));
+        return;
+      }
 
+      const newVideo: Video = {
+        id: +new Date(),
+        title: req.body.title,
+        author: req.body.author,
+        canBeDownloaded: false,
+        minAgeRestriction: null,
+        createdAt: new Date().toISOString(),
+        publicationDate: new Date().toISOString(),
+        availableResolutions: req.body.availableResolutions,
+      };
 
+      db.videos.push(newVideo);
 
-  router.put(
-    '/:id',( req: RequestWithParams<{ id: string }> & RequestWithBody<VideoUpdateInputDto>,
-      res: Response,) => {
+      res.status(HTTP_STATUSES.CREATED_201).json(mapVideo(newVideo));
+    },
+  );
+
+  router.get(
+    '/:id',
+    (req: RequestWithParams<{ id: string }>, res: Response<VideoOutputDto | ErrorResponse>) => {
       const id = Number(req.params.id);
       const video = db.videos.find((v) => v.id === id);
       if (!video) {
-        return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+        return res
+          .status(HTTP_STATUSES.NOT_FOUND_404)
+          .send(createErrorMessages([{ field: 'id', message: 'Video not found' }]));
       }
-      if (!req.body.title || !req.body.author || !req.body.availableResolutions) {
-        return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
+      return res.status(HTTP_STATUSES.OK_200).json(video);
+    },
+  );
+
+  router.put(
+    '/:id',
+    (
+      req: RequestWithParams<{ id: string }> & RequestWithBody<VideoUpdateInputDto>,
+      res: Response<VideoOutputDto | ErrorResponse>,
+    ) => {
+      const id = Number(req.params.id);
+      const video = db.videos.find((v) => v.id === id);
+      if (!video) {
+        return res
+          .status(HTTP_STATUSES.NOT_FOUND_404)
+          .send(createErrorMessages([{ field: 'id', message: 'Video not found' }]));
+      }
+
+     const errors = validateVideoUpdate(req.body);
+     
+      if (errors.length > 0) {
+        return res
+          .status(HTTP_STATUSES.BAD_REQUEST_400)
+          .send(createErrorMessages( errors ));
       }
       video.title = req.body.title;
       video.author = req.body.author;
@@ -80,16 +105,14 @@ export const videosRouter = (db: DBType) => {
     },
   );
 
-
-  
-  router.delete('/:id', (req: RequestWithParams<{ id: string }>, res: Response) => {
+  router.delete('/:id', (req: RequestWithParams<{ id: string }>, res: Response<VideoOutputDto | ErrorResponse>) => {
     const id = Number(req.params.id);
     const index = db.videos.findIndex((c) => c.id === id);
     if (index > -1) {
       db.videos.splice(index, 1);
       res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
     } else {
-      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+      res.status(HTTP_STATUSES.NOT_FOUND_404).send(createErrorMessages([{ field: 'id', message: 'Video not found' }]));
     }
   });
   return router;

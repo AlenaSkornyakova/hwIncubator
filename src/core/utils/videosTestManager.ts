@@ -2,6 +2,8 @@ import request from "supertest";
 import { app } from "../../set-app";
 import { VideoInputDto } from "../../videos/dto/video-input.dto";
 import { HTTP_STATUSES, HttpStatusType } from "./http-status";
+import {routerPath} from '../../set-app';
+
 
 
 export const videosTestManager = {
@@ -10,7 +12,7 @@ export const videosTestManager = {
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201
   ) {
     const response = await request(app)
-      .post(`/videos`)
+      .post(`${routerPath.videos}`)
       .send(data)
       .expect(expectedStatusCode);
 
