@@ -1,5 +1,4 @@
 import { ValidationError } from '../../core/types/validationError';
-import { VideoInputDto } from '../dto/video-input.dto';
 import { VideoUpdateInputDto } from '../dto/video-update.input.dto';
 import { validateVideoCommonFields } from './video-common.validation';
 

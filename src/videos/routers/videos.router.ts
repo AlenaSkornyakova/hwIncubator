@@ -8,7 +8,7 @@ import { HTTP_STATUSES } from '../../core/utils/http-status';
 import { RequestWithBody, RequestWithParams } from '../../core/types/requestTypes';
 import { VideoUpdateInputDto } from '../dto/video-update.input.dto';
 import { validateVideoInput } from '../validation/video-input.validation';
-import {validateVideoUpdate} from '../validation/video-update.validation';
+import { validateVideoUpdate } from '../validation/video-update.validation';
 import { createErrorMessages } from '../../core/utils/error.utils';
 import { ErrorResponse } from '../../core/types/validationError';
 
