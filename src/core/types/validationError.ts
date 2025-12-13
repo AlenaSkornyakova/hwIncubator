@@ -5,5 +5,5 @@ export type ValidationError = {
 };
 
 export type ErrorResponse = { 
-  errorMessages: ValidationError[];
+  errorsMessages: ValidationError[];
 };

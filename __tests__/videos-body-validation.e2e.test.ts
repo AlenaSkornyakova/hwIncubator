@@ -33,7 +33,7 @@ describe('Video API body validation', () => {
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
-    expect(invalidDataSet1.body.errorMessages).toHaveLength(3);
+    expect(invalidDataSet1.body.errorsMessages).toHaveLength(3);
 
     const invalidDataSet2 = await request(app)
       .post(routerPath.videos)
@@ -45,7 +45,7 @@ describe('Video API body validation', () => {
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
-    expect(invalidDataSet2.body.errorMessages).toHaveLength(3);
+    expect(invalidDataSet2.body.errorsMessages).toHaveLength(3);
 
     const invalidDataSet3 = await request(app)
       .post(routerPath.videos)
@@ -55,7 +55,7 @@ describe('Video API body validation', () => {
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
-    expect(invalidDataSet3.body.errorMessages).toHaveLength(1);
+    expect(invalidDataSet3.body.errorsMessages).toHaveLength(1);
 
     const videoListResponse = await request(app).get(routerPath.videos).expect(HTTP_STATUSES.OK_200);
     expect(videoListResponse.body).toHaveLength(0);
@@ -79,7 +79,7 @@ describe('Video API body validation', () => {
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
     // тут длина может быть 3 или 4 — зависит от того, валидируешь ли ты canBeDownloaded в update
-    expect(invalidDataSet1.body.errorMessages.length).toBeGreaterThanOrEqual(3);
+    expect(invalidDataSet1.body.errorsMessages.length).toBeGreaterThanOrEqual(3);
 
     const invalidDataSet3 = await request(app)
       .put(`${routerPath.videos}/${createdVideo.id}`)
@@ -89,7 +89,7 @@ describe('Video API body validation', () => {
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
-    expect(invalidDataSet3.body.errorMessages).toHaveLength(1);
+    expect(invalidDataSet3.body.errorsMessages).toHaveLength(1);
 
     const videoResponse = await request(app)
       .get(`${routerPath.videos}/${createdVideo.id}`)
