@@ -1,19 +1,18 @@
 import express, { Request, Response } from 'express';
-import { videosRouter } from './videos/routers/videos.router';
-import { db } from './db/in-memory.db';
+import { postsRouter } from './features/posts/routers/posts.router';
+import { blogsRouter } from './features/blogs/routers/blogs.router';
 import { testsRouter } from './testing/routers/testing.router';
+import { routerPath } from './core/paths/paths';
 
 export const app = express();
 
 app.use(express.json());
 
-export const routerPath = {
-  videos: '/videos',
-  testing: '/testing',
-};
+
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).send('Hello back-end HomeWorks in it-incubator!!!');
 });
-app.use(routerPath.videos, videosRouter(db));
-app.use(routerPath.testing, testsRouter(db));
+app.use(routerPath.posts, postsRouter);
+app.use(routerPath.blogs, blogsRouter);
+app.use(routerPath.testing, testsRouter);

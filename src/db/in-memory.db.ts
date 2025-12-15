@@ -1,20 +1,28 @@
-import type { Video } from "../videos/types/video";
+import type { Blog } from '../features/blogs/types/blogs.type';
+import { Post } from '../features/posts/types/post.type';
 
 export type DBType = {
-  videos: Video[];
-}
+  blogs: Blog[];
+  posts: Post[];
+};
 
 export const db = {
-  videos:  <Video[]>[
+  blogs: <Blog[]>[
     {
-      id: 1,
-      title: "string",
-      author: "string",
-      canBeDownloaded: true,
-      minAgeRestriction: null,
-      createdAt: "2025-12-11T11:23:37.295Z",
-      publicationDate: "2025-12-11T11:23:37.295Z",
-      availableResolutions: ["P144"],
+      id: 'string',
+      name: 'string',
+      description: 'string',
+      websiteUrl: 'string',
+    },
+  ],
+  posts: <Post[]>[
+    {
+      id: 'string',
+      title: 'string',
+      shortDescription: 'string',
+      content: 'string',
+      blogId: 'string',
+      blogName: 'string',
     },
   ],
 };
