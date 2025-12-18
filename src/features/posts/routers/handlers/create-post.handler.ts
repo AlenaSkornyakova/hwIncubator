@@ -5,17 +5,15 @@ import { PostViewModelDto } from '../../dto/posts.view-model.dto';
 import { PostInputModelDto } from '../../dto/posts.input-model.dto';
 import { RequestWithBody} from '../../../../core/types/request.types';
 import { ErrorResponse } from '../../../../core/types/validation-error.types';
-import { DBType } from '../../../../db/in-memory.db';
 import { mapPost } from '../../../../core/utils/mappers';
+import { postsRepository } from '../../repositories/posts.repository';
 
 
 
 
 export const createPostHandler = 
-  (db: DBType) =>
   (req: RequestWithBody<PostInputModelDto>, 
   res: Response<PostViewModelDto | ErrorResponse>) => {
-
     
           if (!req.body.title || !req.body.shortDescription 
             || !req.body.content || !req.body.blogId) {
@@ -32,7 +30,7 @@ export const createPostHandler =
             blogName: 'Blog name placeholder for new Post',
           };
     
-          db.posts.push(newPost);
+          postsRepository.create(newPost);
     
           res.status(HTTP_STATUSES.CREATED_201).json(mapPost(newPost));
         }

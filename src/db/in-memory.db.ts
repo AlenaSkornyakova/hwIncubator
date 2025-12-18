@@ -1,4 +1,4 @@
-import type { Blog } from '../features/blogs/types/blogs.type';
+import type { Blog } from '../features/blogs/types/blog.type';
 import { Post } from '../features/posts/types/post.type';
 
 export type DBType = {

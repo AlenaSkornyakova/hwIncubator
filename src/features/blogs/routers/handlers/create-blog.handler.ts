@@ -2,14 +2,13 @@ import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithBody} from '../../../../core/types/request.types';
 import { ErrorResponse } from '../../../../core/types/validation-error.types';
-import { DBType } from '../../../../db/in-memory.db';
 import { mapBlog } from '../../../../core/utils/mappers';
 import { BlogInputModelDto } from '../../dto/blogs.input-model.dto';
  import { BlogViewModelDto } from '../../dto/blogs.view-model.dto'; 
-import { Blog } from '../../types/blogs.type';
+import { Blog } from '../../types/blog.type';
+import { blogsRepository } from '../../repositories/blogs.repository';
 
 export const createBlogHandler = 
-  (db: DBType) =>
   (req: RequestWithBody<BlogInputModelDto>, 
   res: Response<BlogViewModelDto | ErrorResponse>) => {
 
@@ -26,7 +25,7 @@ export const createBlogHandler =
             websiteUrl: req.body.websiteUrl,
           };
     
-          db.blogs.push(newBlog);
+          blogsRepository.create(newBlog);
     
           res.status(HTTP_STATUSES.CREATED_201).json(mapBlog(newBlog));
         }

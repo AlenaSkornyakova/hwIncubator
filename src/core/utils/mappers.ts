@@ -1,4 +1,4 @@
-import { Blog } from '../../features/blogs/types/blogs.type';
+import { Blog } from '../../features/blogs/types/blog.type';
 import { BlogViewModelDto } from '../../features/blogs/dto/blogs.view-model.dto';
 import { Post } from '../../features/posts/types/post.type';
 import { PostViewModelDto } from '../../features/posts/dto/posts.view-model.dto';
