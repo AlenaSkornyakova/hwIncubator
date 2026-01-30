@@ -3,21 +3,21 @@ import { db } from '../../../db/in-memory.db';
 import { PostInputModelDto } from '../dto/posts.input-model.dto';
 
 export const postsRepository = { 
-  findAll(): Post[] {
+  async findAll(): Promise<Post[]> {
     return db.posts;
   },
 
-  findById(id: string): Post | null {
+  async findById(id: string): Promise<Post | null> {
     return db.posts.find((p) => p.id === id) ?? null;
   },
 
-  create(newPost: Post): Post {
+  async create(newPost: Post): Promise<Post>   {
     db.posts.push(newPost);
 
     return newPost;
   },
 
-  update(id: string, dto: PostInputModelDto): boolean {
+  async update(id: string, dto: PostInputModelDto): Promise<boolean> {
     const post = db.posts.find((p) => p.id === id);
 
     if (!post) {
@@ -32,7 +32,7 @@ export const postsRepository = {
     return true;
   },
 
-  delete(id: string): boolean {
+  async delete(id: string): Promise<boolean> {
     const index = db.posts.findIndex((p) => p.id === id);
     if (index === -1) {
       return false;

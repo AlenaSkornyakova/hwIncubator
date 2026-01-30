@@ -2,24 +2,18 @@ import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithParams } from '../../../../core/types/request.types';
 import { PostViewModelDto } from '../../dto/posts.view-model.dto';
-import { ErrorResponse } from '../../../../core/types/validation-error.types';
-import { createErrorMessages } from '../../../../core/utils/error.utils';
 import { postsRepository } from '../../repositories/posts.repository';
 
-export const deletePostHandler = (
+export const deletePostHandler  =  async (
   req: RequestWithParams<{ id: string }>,
-  res: Response<PostViewModelDto | ErrorResponse>,
+  res: Response<PostViewModelDto>,
 ) => {
   const id = req.params.id;
-
-  const deleted = postsRepository.delete(id);
+  const deleted = await postsRepository.delete(id);
 
   if (!deleted) {
-    res
-      .status(HTTP_STATUSES.NOT_FOUND_404)
-      .send(createErrorMessages([{ field: 'id', message: 'post not found' }]));
+    res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     return;
   }
-
   res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 };

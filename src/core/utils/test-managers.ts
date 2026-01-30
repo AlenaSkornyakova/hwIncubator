@@ -1,6 +1,5 @@
 import request from 'supertest';
 import { app } from '../../set-app';
-
 import { HTTP_STATUSES, HttpStatusType } from './http-status';
 import { routerPath } from '../../core/paths/paths';
 import { BlogInputModelDto } from '../../features/blogs/dto/blogs.input-model.dto';
@@ -57,5 +56,22 @@ export const postTestManager = {
       });
     }
     return { response, createdEntity };
+  },
+  
+  async createPostWithBlog(
+    postBase: Omit<PostInputModelDto, 'blogId'>,
+    blogData: BlogInputModelDto,
+    expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
+  ) {
+    const { createdEntity: blog } = await blogTestManager.createBlog(blogData);
+
+    const postDto: PostInputModelDto = {
+      ...postBase,
+      blogId: blog.id,
+    };
+
+    const { response, createdEntity: post } = await this.createPost(postDto, expectedStatusCode);
+
+    return { createdEntity: post, response };
   },
 };

@@ -4,12 +4,15 @@ import { createPostHandler } from './handlers/create-post.handler';
 import { getPostByIdHandler } from './handlers/get-post-by-id.handler';
 import { updatePostHandler } from './handlers/update-post.handler';
 import { deletePostHandler } from './handlers/delete-post.handler';
+import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation.middleware';
+import { postInputValidation } from '../validation/post-input.validation';
+import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
 
 export const postsRouter = express.Router();
 
   postsRouter
 .get('/', getPostsListHandler)
-.post('/', createPostHandler)
-.get('/:id', getPostByIdHandler)
-.put('/:id', updatePostHandler)
-.delete('/:id',  deletePostHandler)
+.post('/',  postInputValidation, inputValidationResultMiddleware, createPostHandler,)
+.get('/:id',  paramsIdValidation,inputValidationResultMiddleware,getPostByIdHandler)
+.put('/:id',  paramsIdValidation, postInputValidation, inputValidationResultMiddleware, updatePostHandler) 
+.delete('/:id',  paramsIdValidation, inputValidationResultMiddleware, deletePostHandler);

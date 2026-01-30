@@ -5,12 +5,9 @@ import { mapBlog } from '../../../../core/utils/mappers';
 import { blogsRepository } from '../../repositories/blogs.repository';
 
 
-
-
-
-
-export const getBlogsListHandler = 
-     (req: Request , res: Response <BlogViewModelDto[]> ) => {
-          const blogs = blogsRepository.findAll();
+export const getBlogsListHandler = async(
+     req: Request,
+     res: Response <BlogViewModelDto[]> ) => {
+          const blogs = await blogsRepository.findAll();
      res.status(HTTP_STATUSES.OK_200).json(blogs.map(mapBlog));
 }    

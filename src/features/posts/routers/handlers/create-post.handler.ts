@@ -4,34 +4,29 @@ import { Post } from '../../types/post.type';
 import { PostViewModelDto } from '../../dto/posts.view-model.dto';
 import { PostInputModelDto } from '../../dto/posts.input-model.dto';
 import { RequestWithBody} from '../../../../core/types/request.types';
-import { ErrorResponse } from '../../../../core/types/validation-error.types';
 import { mapPost } from '../../../../core/utils/mappers';
 import { postsRepository } from '../../repositories/posts.repository';
+import { blogsRepository } from '../../../blogs/repositories/blogs.repository';
 
 
+export const createPostHandler = async (
+  req: RequestWithBody<PostInputModelDto>, 
+  res: Response<PostViewModelDto>) => {
 
+    const { title, shortDescription, content, blogId } = req.body;
+    const blog = await blogsRepository.findById(blogId);
 
-export const createPostHandler = 
-  (req: RequestWithBody<PostInputModelDto>, 
-  res: Response<PostViewModelDto | ErrorResponse>) => {
-    
-          if (!req.body.title || !req.body.shortDescription 
-            || !req.body.content || !req.body.blogId) {
-                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
-                return;
-          }
-    
           const newPost: Post = {
             id: new Date().toString(),
-            title: req.body.title,
-            shortDescription: req.body.shortDescription,
-            content: req.body.content,
-            blogId: req.body.blogId,
-            blogName: 'Blog name placeholder for new Post',
+            title: title,
+            shortDescription: shortDescription,
+            content: content,
+            blogId: blogId,
+             blogName: blog!.name,
           };
     
-          postsRepository.create(newPost);
+          await postsRepository.create(newPost);
     
-          res.status(HTTP_STATUSES.CREATED_201).json(mapPost(newPost));
+          return res.status(HTTP_STATUSES.CREATED_201).json(mapPost(newPost));
         }
     

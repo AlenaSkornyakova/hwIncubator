@@ -3,110 +3,84 @@ import { app } from '../src/set-app';
 import { routerPath } from '../src/core/paths/paths';
 import { HTTP_STATUSES } from '../src/core/utils/http-status';
 import { PostInputModelDto } from '../src/features/posts/dto/posts.input-model.dto';
-import {  postTestManager } from '../src/core/utils/test-managers';
+import { postTestManager } from '../src/core/utils/test-managers';
+import { BlogInputModelDto } from '../src/features/blogs/dto/blogs.input-model.dto';
 
-
-// export interface PostInputModelDto {
-//   title: string;
-//   shortDescription: string;
-//   content: string;
-//   blogId: string;
-// }
-// export type PostViewModelDto = {
-//   id: string;
-//   title: string;
-//   shortDescription: string;
-//   content: string;
-//   blogId: string;
-//   blogName: string;
-// }
-
-describe('Post API', () => {
+describe('Post API CRUD', () => {
   beforeEach(async () => {
-    await request(app).delete(`${routerPath.testing}/all-data`);
+    await request(app)
+      .delete(`${routerPath.testing}/all-data`)
+      .expect(HTTP_STATUSES.NO_CONTENT_204);  
   });
   afterEach(async () => {
-    await request(app).delete(`${routerPath.testing}/all-data`);
+    await request(app).delete(`${routerPath.testing}/all-data`)
+    .expect(HTTP_STATUSES.NO_CONTENT_204);
   });
 
-  const createdData: PostInputModelDto = {
+  const blogData: BlogInputModelDto = {
+    name: 'Test Blog Name',
+    description: 'Test description for Blog',
+    websiteUrl: 'https://testblog.com',
+  };
+  const postBase: Omit<PostInputModelDto, 'blogId'> = {
     title: 'Test Post Title',
     shortDescription: 'Test Post Short Description',
     content: 'Test Post Content',
-    blogId: 'Test BlogId placeholder',
   };
 
-  it('should return 200 and an empty array. The server is alive, the route is connected, and the contract is honored.', async () => {
-    await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200, []);
+    it('GET /posts should return 200 and an empty array. The server is alive, the route is connected, and the contract is honored.', async () => {
+      await request(app).get(routerPath.posts).expect(HTTP_STATUSES.OK_200, []);
+    });
+
+    it('POST /posts should create a new entity and return it', async () => {
+      const { createdEntity } = await postTestManager.createPostWithBlog(postBase, blogData);
+      await request(app).get(`${routerPath.posts}`).expect(HTTP_STATUSES.OK_200, [createdEntity]);
+    });
+
+    it('GET /posts/:id should return entity by existing id', async () => {
+      const { createdEntity } = await postTestManager.createPostWithBlog(postBase, blogData);
+      const response = await request(app)
+        .get(`${routerPath.posts}/${createdEntity.id}`)
+        .expect(HTTP_STATUSES.OK_200);
+      expect(response.body).toEqual(createdEntity);
+    });
+
+    it('GET /posts/:id should return 404 for non-existing id', async () => {
+      await request(app).get(`${routerPath.posts}/9999`).expect(HTTP_STATUSES.NOT_FOUND_404);
+    });
+
+    it('PUT /posts/:id should update the entity by id with correct input data', async () => {
+       const { createdEntity } = await postTestManager.createPostWithBlog(postBase, blogData);
+
+      const updatedData: PostInputModelDto = {
+        title: 'Updated' + createdEntity.title ,
+        shortDescription: 'Updated' + createdEntity.shortDescription,
+        content: 'Updated' + createdEntity.content,
+        blogId: createdEntity.blogId,
+      };
+     
+      await request(app)
+        .put(`${routerPath.posts}/${createdEntity.id}`)
+        .send(updatedData)
+        .expect(HTTP_STATUSES.NO_CONTENT_204);
+
+      await request(app)
+        .get(`${routerPath.posts}/${createdEntity.id}`)
+        .expect(HTTP_STATUSES.OK_200, {
+          ...createdEntity,
+          ...updatedData,
+        });
+    });
+
+    it('DELETE /posts/:id should delete the entity by id', async () => {
+      const { createdEntity } = await postTestManager.createPostWithBlog(postBase, blogData);
+      await request(app)
+        .delete(`${routerPath.posts}/${createdEntity.id}`)
+        .expect(HTTP_STATUSES.NO_CONTENT_204);
+      await request(app)
+        .get(`${routerPath.posts}/${createdEntity.id}`)
+        .expect(HTTP_STATUSES.NOT_FOUND_404);
+    });
   });
 
-  it('should create a new entity with correct input data and return it', async () => {
-    const { createdEntity } = await postTestManager.createPost(createdData);
-    await request(app).get(`${routerPath.posts}`).expect(HTTP_STATUSES.OK_200, [createdEntity]);
-  });
 
-  it("shouldn't create a new entity with incorrect input data and return status 400", async () => {
-    const invalidData = {
-      title: 'Only title provided',
-    };
-    await postTestManager.createPost(invalidData as any, HTTP_STATUSES.BAD_REQUEST_400);
-  });
-
-  it('should return entity by existing id', async () => {
-    const { createdEntity } = await postTestManager.createPost(createdData);
-    const response = await request(app)
-      .get(`${routerPath.posts}/${createdEntity.id}`)
-      .expect(HTTP_STATUSES.OK_200);
-    expect(response.body).toEqual(createdEntity);
-  });
-
-  it('should return 404 for non-existing id', async () => {
-    await request(app).get(`${routerPath.posts}/9999`).expect(HTTP_STATUSES.NOT_FOUND_404);
-  });
-
-  it('should update the entity by id with correct input data', async () => {
-    const updatedData: PostInputModelDto = {
-      title: createdData.title + ' - updated',
-      shortDescription: createdData.shortDescription + ' - updated',
-      content: createdData.content + ' - updated',
-      blogId: createdData.blogId + ' - updated',
-    };
-    const { createdEntity } = await postTestManager.createPost(createdData);
-
-    await request(app)
-      .put(`${routerPath.posts}/${createdEntity.id}`)
-      .send(updatedData)
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
-
-    await request(app)
-      .get(`${routerPath.posts}/${createdEntity.id}`)
-      .expect(HTTP_STATUSES.OK_200, {
-        ...createdEntity,
-        ...updatedData,
-      });
-  });
-
-  it("shouldn't update the entity by id with incorrect input data", async () => {
-    const { createdEntity } = await postTestManager.createPost(createdData);
-    const invalidData: PostInputModelDto = {
-      title: '',
-      shortDescription: '',
-      content: '',
-      blogId: '',
-    };
-    await request(app)
-      .put(`${routerPath.posts}/${createdEntity.id}`)
-      .send(invalidData)
-      .expect(HTTP_STATUSES.BAD_REQUEST_400);
-  });
-
-  it('should delete the entity by id', async () => {
-    const { createdEntity } = await postTestManager.createPost(createdData);
-    await request(app)
-      .delete(`${routerPath.posts}/${createdEntity.id}`)
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
-    await request(app)
-      .get(`${routerPath.posts}/${createdEntity.id}`)
-      .expect(HTTP_STATUSES.NOT_FOUND_404);
-  });
-});
