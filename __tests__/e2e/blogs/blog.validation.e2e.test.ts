@@ -1,20 +1,24 @@
 import request from 'supertest';
-import { app } from '../src/set-app';
-import { routerPath } from '../src/core/paths/paths';
-import { HTTP_STATUSES } from '../src/core/utils/http-status';
-import { blogTestManager } from '../src/core/utils/test-managers';
-import { BlogInputModelDto } from '../src/features/blogs/dto/blogs.input-model.dto';
+import { app } from '../../../src/set-app';
+import { routerPath } from '../../../src/core/paths/paths';
+import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
+import { blogTestManager } from '../../utils/test-managers';
+import { BlogInputModelDto } from '../../../src/features/blogs/dto/blogs.input-model.dto';
+import { clearDb } from '../../utils/clear-db';
+import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
+import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';
 
 describe('Blog API body validation check', () => {
+
+  const ADMIN_AUTH = generateBasicAuthHeader(
+    TEST_ADMIN_USERNAME,
+    TEST_ADMIN_PASSWORD,
+  );
   beforeEach(async () => {
-    await request(app)
-      .delete(`${routerPath.testing}/all-data`)
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
+    await clearDb(app);
   });
   afterEach(async () => {
-    await request(app)
-      .delete(`${routerPath.testing}/all-data`)
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
+    await clearDb(app);
   });
 
   const correctBlogData: BlogInputModelDto = {
@@ -27,6 +31,7 @@ describe('Blog API body validation check', () => {
     //  несколько полей плохие
     const invalidDataSet1 = await request(app)
       .post(routerPath.blogs)
+      .set('Authorization', ADMIN_AUTH)
       .send({
         ...correctBlogData,
         name: '   ',
@@ -40,6 +45,7 @@ describe('Blog API body validation check', () => {
     //  некорректный формат URL
     const invalidDataSet2 = await request(app)
       .post(routerPath.blogs)
+      .set('Authorization', ADMIN_AUTH)
       .send({
         ...correctBlogData,
         websiteUrl: 'invalid-url',
@@ -60,6 +66,7 @@ describe('Blog API body validation check', () => {
 
     const invalidUpdate = await request(app)
       .put(`${routerPath.blogs}/${createdEntity.id}`)
+      .set('Authorization', ADMIN_AUTH)
       .send({
        name: '   ',
        description: '',

@@ -1,21 +1,26 @@
 import request from 'supertest';
-import { app } from '../src/set-app';
-import { routerPath } from '../src/core/paths/paths';
-import { HTTP_STATUSES } from '../src/core/utils/http-status';
-import { PostInputModelDto } from '../src/features/posts/dto/posts.input-model.dto';
-import { postTestManager} from '../src/core/utils/test-managers';
-import { BlogInputModelDto } from '../src/features/blogs/dto/blogs.input-model.dto';
+import { app } from '../../../src/set-app';
+import { routerPath } from '../../../src/core/paths/paths';
+import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
+import { PostInputModelDto } from '../../../src/features/posts/dto/posts.input-model.dto';
+import { postTestManager} from '../../utils/test-managers';
+import { BlogInputModelDto } from '../../../src/features/blogs/dto/blogs.input-model.dto';
+import { clearDb } from '../../utils/clear-db';
+import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
+import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';
 
 describe('Posts API body validation check', () => {
+ 
+const ADMIN_AUTH = generateBasicAuthHeader(
+  TEST_ADMIN_USERNAME,
+  TEST_ADMIN_PASSWORD,
+);
+
   beforeEach(async () => {
-    await request(app)
-      .delete(`${routerPath.testing}/all-data`)
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
+    await clearDb(app);
   });
   afterEach(async () => {
-    await request(app)
-      .delete(`${routerPath.testing}/all-data`)
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
+    await clearDb(app);
   });
 
   const blogData: BlogInputModelDto = {
@@ -37,6 +42,7 @@ describe('Posts API body validation check', () => {
     //  несколько полей плохие
     const invalidDataSet1 = await request(app)
       .post(routerPath.posts)
+      .set('Authorization', ADMIN_AUTH)
       .send({
         ...correctPostData,
         title: '   ',
@@ -50,6 +56,7 @@ describe('Posts API body validation check', () => {
     //  blogId не существует
     const invalidDataSet2 = await request(app)
       .post(routerPath.posts)
+      .set('Authorization', ADMIN_AUTH)
       .send({
         ...correctPostData,
         blogId: 'non-existing-id',
@@ -59,7 +66,9 @@ describe('Posts API body validation check', () => {
     expect(invalidDataSet2.body.errorsMessages).toHaveLength(1);
     
 
-    const list = await request(app).get(routerPath.posts).expect(HTTP_STATUSES.OK_200);
+    const list = await request(app).get(routerPath.posts)
+    .set('Authorization', ADMIN_AUTH)
+    .expect(HTTP_STATUSES.OK_200);
     expect(list.body).toHaveLength(1);
   });
 
@@ -72,6 +81,7 @@ describe('Posts API body validation check', () => {
 
     const invalidUpdate = await request(app)
       .put(`${routerPath.posts}/${correctPostData.id}`)
+      .set('Authorization', ADMIN_AUTH)
       .send({
         title: '   ',
         shortDescription: '',
@@ -84,6 +94,7 @@ describe('Posts API body validation check', () => {
 
     const get = await request(app)
       .get(`${routerPath.posts}/${correctPostData.id}`)
+      .set('Authorization', ADMIN_AUTH)
       .expect(HTTP_STATUSES.OK_200);
 
     expect(get.body).toEqual(correctPostData);

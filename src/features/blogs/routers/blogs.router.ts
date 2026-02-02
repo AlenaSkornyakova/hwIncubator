@@ -7,14 +7,13 @@ import { deleteBlogHandler } from './handlers/delete-blog.handler';
 import { blogInputValidation } from '../validation/blog-input.validation';
 import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation.middleware';
 import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
+import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
 
 export const blogsRouter = express.Router();
 
-
-
 blogsRouter
 .get('/', getBlogsListHandler)
-.post('/', blogInputValidation, inputValidationResultMiddleware,createBlogHandler )
+.post('/', superAdminGuardMiddleware, blogInputValidation, inputValidationResultMiddleware,createBlogHandler )
 .get('/:id', paramsIdValidation, inputValidationResultMiddleware, getBlogByIdHandler)
-.put('/:id', paramsIdValidation, blogInputValidation, inputValidationResultMiddleware, updateBlogHandler)
-.delete('/:id', paramsIdValidation, inputValidationResultMiddleware, deleteBlogHandler)
+.put('/:id', superAdminGuardMiddleware, paramsIdValidation, blogInputValidation, inputValidationResultMiddleware, updateBlogHandler)
+.delete('/:id', superAdminGuardMiddleware, paramsIdValidation, inputValidationResultMiddleware, deleteBlogHandler)

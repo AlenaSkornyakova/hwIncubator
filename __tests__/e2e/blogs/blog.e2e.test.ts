@@ -1,20 +1,25 @@
 import request from 'supertest';
-import { app } from '../src/set-app';
-import { routerPath } from '../src/core/paths/paths';
-import { HTTP_STATUSES } from '../src/core/utils/http-status';
-import { BlogInputModelDto } from '../src/features/blogs/dto/blogs.input-model.dto';
-import { blogTestManager } from '../src/core/utils/test-managers';
+import { app } from '../../../src/set-app';
+import { routerPath } from '../../../src/core/paths/paths';
+import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
+import { BlogInputModelDto } from '../../../src/features/blogs/dto/blogs.input-model.dto';
+import { blogTestManager } from '../../utils/test-managers';
+import { clearDb } from '../../utils/clear-db';
+import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
+import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';
 
 describe('Blog API CRUD', () => {
+
+  const ADMIN_AUTH = generateBasicAuthHeader(
+    TEST_ADMIN_USERNAME,
+    TEST_ADMIN_PASSWORD,
+  );
+
   beforeEach(async () => {
-    await request(app)
-      .delete(`${routerPath.testing}/all-data`)
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
+     await clearDb(app);
   });
   afterEach(async () => {
-    await request(app)
-      .delete(`${routerPath.testing}/all-data`)
-      .expect(HTTP_STATUSES.NO_CONTENT_204);
+     await clearDb(app);
   });
 
   const blogData: BlogInputModelDto = {
@@ -58,6 +63,7 @@ describe('Blog API CRUD', () => {
 
     await request(app)
       .put(`${routerPath.blogs}/${createdEntity.id}`)
+      .set('Authorization', ADMIN_AUTH)
       .send(updatedData)
       .expect(HTTP_STATUSES.NO_CONTENT_204);
 
@@ -73,6 +79,7 @@ describe('Blog API CRUD', () => {
     const { createdEntity } = await blogTestManager.createBlog(blogData);
     await request(app)
       .delete(`${routerPath.blogs}/${createdEntity.id}`)
+      .set('Authorization', ADMIN_AUTH)
       .expect(HTTP_STATUSES.NO_CONTENT_204);
     await request(app)
       .get(`${routerPath.blogs}/${createdEntity.id}`)

@@ -7,12 +7,12 @@ import { deletePostHandler } from './handlers/delete-post.handler';
 import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation.middleware';
 import { postInputValidation } from '../validation/post-input.validation';
 import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
-
+import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
 export const postsRouter = express.Router();
 
   postsRouter
 .get('/', getPostsListHandler)
-.post('/',  postInputValidation, inputValidationResultMiddleware, createPostHandler,)
+.post('/',  superAdminGuardMiddleware, postInputValidation, inputValidationResultMiddleware, createPostHandler,)
 .get('/:id',  paramsIdValidation,inputValidationResultMiddleware,getPostByIdHandler)
-.put('/:id',  paramsIdValidation, postInputValidation, inputValidationResultMiddleware, updatePostHandler) 
-.delete('/:id',  paramsIdValidation, inputValidationResultMiddleware, deletePostHandler);
+.put('/:id', superAdminGuardMiddleware, paramsIdValidation, postInputValidation, inputValidationResultMiddleware, updatePostHandler) 
+.delete('/:id', superAdminGuardMiddleware, paramsIdValidation, inputValidationResultMiddleware, deletePostHandler);

@@ -1,9 +1,16 @@
 import request from 'supertest';
-import { app } from '../../set-app';
-import { HTTP_STATUSES, HttpStatusType } from './http-status';
-import { routerPath } from '../../core/paths/paths';
-import { BlogInputModelDto } from '../../features/blogs/dto/blogs.input-model.dto';
-import { PostInputModelDto } from '../../features/posts/dto/posts.input-model.dto';
+import { app } from '../../src/set-app';
+import { HTTP_STATUSES, HttpStatusType } from '../../src/core/utils/http-status';
+import { routerPath } from '../../src/core/paths/paths';
+import { BlogInputModelDto } from '../../src/features/blogs/dto/blogs.input-model.dto';
+import { PostInputModelDto } from '../../src/features/posts/dto/posts.input-model.dto';
+import { generateBasicAuthHeader } from './generateBasicAuthHeader';
+import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../config/admin-credentials';
+
+const ADMIN_AUTH = generateBasicAuthHeader(
+  TEST_ADMIN_USERNAME,
+  TEST_ADMIN_PASSWORD,
+);
 
 export const blogTestManager = {
   async createBlog(
@@ -12,6 +19,7 @@ export const blogTestManager = {
   ) {
     const response = await request(app)
       .post(`${routerPath.blogs}`)
+      .set('Authorization', ADMIN_AUTH)
       .send(data)
       .expect(expectedStatusCode);
 
@@ -38,6 +46,7 @@ export const postTestManager = {
   ) {
     const response = await request(app)
       .post(`${routerPath.posts}`)
+      .set('Authorization', ADMIN_AUTH)
       .send(data)
       .expect(expectedStatusCode);
 
@@ -57,7 +66,7 @@ export const postTestManager = {
     }
     return { response, createdEntity };
   },
-  
+
   async createPostWithBlog(
     postBase: Omit<PostInputModelDto, 'blogId'>,
     blogData: BlogInputModelDto,
