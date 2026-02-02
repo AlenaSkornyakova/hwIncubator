@@ -8,21 +8,21 @@ export type DBType = {
 
 export const db = {
   blogs: <Blog[]>[
-    {
-      id: 'string',
-      name: 'string',
-      description: 'string',
-      websiteUrl: 'string',
-    },
+    // {
+    //   id: 'string',
+    //   name: 'string',
+    //   description: 'string',
+    //   websiteUrl: 'string',
+    // },
   ],
   posts: <Post[]>[
-    {
-      id: 'string',
-      title: 'string',
-      shortDescription: 'string',
-      content: 'string',
-      blogId: 'string',
-      blogName: 'string',
-    },
+    // {
+    //   id: 'string',
+    //   title: 'string',
+    //   shortDescription: 'string',
+    //   content: 'string',
+    //   blogId: 'string',
+    //   blogName: 'string',
+    // },
   ],
 };

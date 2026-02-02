@@ -12,9 +12,9 @@ export const getBlogByIdHandler = async(
 ) => {
   const id = req.params.id;
   const blog = await blogsRepository.findById(id);
-  if (blog) {
-    return res.status(HTTP_STATUSES.OK_200).json(mapBlog(blog));
+  if (!blog) {
+    res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+    return;
   }
-  return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-  
+  res.status(HTTP_STATUSES.OK_200).json(mapBlog(blog));
 }
