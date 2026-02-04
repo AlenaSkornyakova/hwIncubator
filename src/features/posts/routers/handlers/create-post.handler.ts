@@ -17,7 +17,7 @@ export const createPostHandler = async (
     const blog = await blogsRepository.findById(blogId);
 
           const newPost: Post = {
-            id: new Date().toString(),
+            id: crypto.randomUUID(),
             title: title,
             shortDescription: shortDescription,
             content: content,

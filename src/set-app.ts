@@ -7,7 +7,10 @@ import { routerPath } from './core/paths/paths';
 export const app = express();
 
 app.use(express.json());
-
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
 
 
 app.get('/', (req: Request, res: Response) => {

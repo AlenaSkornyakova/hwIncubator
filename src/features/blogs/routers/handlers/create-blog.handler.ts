@@ -12,7 +12,7 @@ export const createBlogHandler = async(
   res: Response<BlogViewModelDto>) => {
 
           const newBlog: Blog = {
-            id: new Date().toString(),
+            id: crypto.randomUUID(),
             name: req.body.name,
             description: req.body.description,
             websiteUrl: req.body.websiteUrl,

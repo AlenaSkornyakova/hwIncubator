@@ -1,17 +1,4 @@
 {
   "version": 2,
-  "name": "hwincubator",
-  "builds": [
-    {
-      "src": "src/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "src/index.ts"
-    }
-  ]
+  "name": "hwincubator"
 }
-
