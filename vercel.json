@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "name": "hwincubator"
+  "name": "hwincubator",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index" }
+  ]
 }
