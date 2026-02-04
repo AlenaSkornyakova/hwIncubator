@@ -24,6 +24,7 @@ export const postInputValidation = [
   .isString().withMessage('blogId must be a string')
   .trim()
   .notEmpty().withMessage('blogId is required')
+  .bail()
   .custom( async (blogId: string) => {
     const blog = await blogsRepository.findById(blogId);
     if (!blog) {
