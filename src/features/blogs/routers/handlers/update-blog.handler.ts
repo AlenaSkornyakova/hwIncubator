@@ -1,21 +1,26 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithBody, RequestWithParams } from '../../../../core/types/request.types';
-import { BlogViewModelDto } from '../../dto/blogs.view-model.dto';
 import { BlogInputModelDto } from '../../dto/blogs.input-model.dto';
-import { blogsRepository } from '../../repositories/blogs.repository';
+import { blogsRepository } from '../../repositories/blogs-db.repository';
 
 export const updateBlogHandler = async (
   req: RequestWithParams<{ id: string }> & RequestWithBody<BlogInputModelDto>,
-  res: Response<BlogViewModelDto>,
+  res: Response,
 ) => {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-    const updated = await blogsRepository.update(id, req.body);
-    
+    const updated = await blogsRepository.updateById(id, req.body);
+
     if (!updated) {
-      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404) 
-      return;
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }
-      res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+
+    return res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+
+  } catch (error) {
+    console.error('Update blog failed:', error);
+    return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
+  }
 };

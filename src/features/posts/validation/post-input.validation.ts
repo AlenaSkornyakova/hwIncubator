@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import { blogsRepository } from '../../blogs/repositories/blogs.repository';
+import { blogsRepository } from '../../blogs/repositories/blogs-db.repository';
 
 export const postInputValidation = [
   body('title')

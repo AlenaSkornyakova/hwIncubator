@@ -5,6 +5,7 @@ export const HTTP_STATUSES = {
   BAD_REQUEST_400: 400,
   NOT_FOUND_404: 404,
   UNAUTHORIZED_401: 401,
+  INTERNAL_SERVER_ERROR_500: 500
 };
 
 export type HttpStatusType = typeof HTTP_STATUSES[keyof typeof HTTP_STATUSES];

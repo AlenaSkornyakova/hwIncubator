@@ -3,19 +3,23 @@ import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { PostViewModelDto } from '../../dto/posts.view-model.dto';
 import { PostInputModelDto } from '../../dto/posts.input-model.dto';
 import { RequestWithBody, RequestWithParams } from '../../../../core/types/request.types';
-import { postsRepository } from '../../repositories/posts.repository';
+import { postsRepository } from '../../repositories/posts-db.repository';
 
-export const updatePostHandler = async(
+export const updatePostHandler = async (
   req: RequestWithParams<{ id: string }> & RequestWithBody<PostInputModelDto>,
-  res: Response<PostViewModelDto >,
+  res: Response<PostViewModelDto>,
 ) => {
+  try {
+    const id = req.params.id;
+    const updated = await postsRepository.update(id, req.body);
 
-  const id = req.params.id;
-  const updated = await postsRepository.update(id, req.body);
+    if (!updated) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+    }
+    return res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 
-  if (!updated) {
-    res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    return;
+  } catch (error) {
+    console.error('Update post failed:', error);
+    return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
   }
-  res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 };
