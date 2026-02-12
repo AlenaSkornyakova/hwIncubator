@@ -4,5 +4,6 @@ node_modules
 .idea
 /.idea
 .env
+.env.atlas
 .vscode
 .DS_Store
