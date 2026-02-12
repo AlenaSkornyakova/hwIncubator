@@ -1,13 +1,12 @@
-import express from 'express';
-import type { Application, Request, Response, NextFunction } from 'express';
+import express, { Express } from 'express';
 import { postsRouter } from './features/posts/routers/posts.router';
 import { blogsRouter } from './features/blogs/routers/blogs.router';
 import { testsRouter } from './testing/routers/testing.router';
 import { routerPath } from './core/paths/paths';
 
-export const setupApp = (app: Application) => {
+export const setupApp = (app: Express) => {
 app.use(express.json());
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');
   next();
 });
