@@ -19,8 +19,6 @@ export async function connectToDb(url: string, dbName: string): Promise<void> {
 
     await db.command({ ping: 1 });
     console.log('✅ Connected to the database');
-    console.log('MONGO_URI:', url);
-    console.log('MONGO_DB_NAME:', process.env.MONGO_DB_NAME);
   } catch (e) {
     await client.close();
     throw new Error(`❌ Database not connected: ${e}`);
