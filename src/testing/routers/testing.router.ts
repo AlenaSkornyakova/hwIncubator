@@ -1,14 +1,11 @@
 import express from 'express';
-import { db } from '../../db/in-memory.db';
 import { HTTP_STATUSES } from '../../core/utils/http-status';
+import { blogCollection, postCollection } from '../../db/mongo.db';
 
+export const testsRouter = express.Router();
 
- export const testsRouter = express.Router();
-
-  testsRouter.delete('/all-data', (req, res) => {
-    db.blogs = [];
-    db.posts = [];
-    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
-  });
-
-
+testsRouter.delete('/all-data', async (req, res) => {
+    await blogCollection.deleteMany({});
+    await postCollection.deleteMany({});
+  res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+});

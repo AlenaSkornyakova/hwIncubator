@@ -1,7 +1,9 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import express from 'express';
 import { setupApp } from './set-app';
 import { connectToDb } from './db/mongo.db';
+
+dotenv.config({ path: '.env.local' });
 
 const bootstrap = async () => {
   const app = express();

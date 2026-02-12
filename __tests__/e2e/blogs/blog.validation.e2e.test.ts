@@ -1,5 +1,4 @@
 import request from 'supertest';
-import { app } from '../../../src/set-app';
 import { routerPath } from '../../../src/core/paths/paths';
 import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
 import { blogTestManager } from '../../utils/test-managers';
@@ -7,17 +6,14 @@ import { BlogInputModelDto } from '../../../src/features/blogs/dto/blogs.input-m
 import { clearDb } from '../../utils/clear-db';
 import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';
+import { createTestApp } from '../../utils/createTestApp';
+import { expectBlogViewModel } from '../../utils/matchers';
 
 describe('Blog API body validation check', () => {
+  const ADMIN_AUTH = generateBasicAuthHeader(TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD);
+  const app = createTestApp();
 
-  const ADMIN_AUTH = generateBasicAuthHeader(
-    TEST_ADMIN_USERNAME,
-    TEST_ADMIN_PASSWORD,
-  );
   beforeEach(async () => {
-    await clearDb(app);
-  });
-  afterEach(async () => {
     await clearDb(app);
   });
 
@@ -54,23 +50,20 @@ describe('Blog API body validation check', () => {
 
     expect(invalidDataSet2.body.errorsMessages).toHaveLength(1);
 
-
     const list = await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200);
     expect(list.body).toHaveLength(0);
   });
 
   it(' PUT /blogs/:id should not update blog when incorrect body passed.', async () => {
-    const { createdEntity: createdEntity } = await blogTestManager.createBlog(
-      correctBlogData
-    );
+    const { createdEntity } = await blogTestManager.createBlog(app, correctBlogData);
 
     const invalidUpdate = await request(app)
       .put(`${routerPath.blogs}/${createdEntity.id}`)
       .set('Authorization', ADMIN_AUTH)
       .send({
-       name: '   ',
-       description: '',
-       websiteUrl: 'invalid-url',
+        name: '   ',
+        description: '',
+        websiteUrl: 'invalid-url',
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
@@ -80,6 +73,6 @@ describe('Blog API body validation check', () => {
       .get(`${routerPath.blogs}/${createdEntity.id}`)
       .expect(HTTP_STATUSES.OK_200);
 
-    expect(get.body).toEqual(createdEntity);
+    expectBlogViewModel(get.body, correctBlogData);
   });
 });

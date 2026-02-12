@@ -1,5 +1,4 @@
 import request from 'supertest';
-import { app } from '../../../src/set-app';
 import { routerPath } from '../../../src/core/paths/paths';
 import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
 import { PostInputModelDto } from '../../../src/features/posts/dto/posts.input-model.dto';
@@ -8,17 +7,15 @@ import { BlogInputModelDto } from '../../../src/features/blogs/dto/blogs.input-m
 import { clearDb } from '../../utils/clear-db';
 import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';
+import { createTestApp } from '../../utils/createTestApp';
+import { expectPostViewModel } from '../../utils/matchers';
 
 describe('Post API CRUD', () => {
-;
-const ADMIN_AUTH = generateBasicAuthHeader(
-  TEST_ADMIN_USERNAME,
-  TEST_ADMIN_PASSWORD,
-);
+  const ADMIN_AUTH = generateBasicAuthHeader(TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD);
+
+  const app = createTestApp();
+
   beforeEach(async () => {
-    await clearDb(app);
-  });
-  afterEach(async () => {
     await clearDb(app);
   });
 
@@ -38,24 +35,48 @@ const ADMIN_AUTH = generateBasicAuthHeader(
   });
 
   it('POST /posts should create a new entity and return it', async () => {
-    const { createdEntity } = await postTestManager.createPostWithBlog(postBase, blogData);
-    await request(app).get(`${routerPath.posts}`).expect(HTTP_STATUSES.OK_200, [createdEntity]);
+    const { createdEntity } = await postTestManager.createPostWithBlog(app, postBase, blogData);
+    expectPostViewModel(createdEntity, {
+      title: postBase.title,
+      shortDescription: postBase.shortDescription,
+      content: postBase.content,
+      blogId: createdEntity.blogId,
+      blogName: blogData.name,
+    });
+    const list = await request(app).get(`${routerPath.posts}`).expect(HTTP_STATUSES.OK_200);
+    expect(list.body).toHaveLength(1);
+    expectPostViewModel(list.body[0], {
+      title: postBase.title,
+      shortDescription: postBase.shortDescription,
+      content: postBase.content,
+      blogId: createdEntity.blogId,
+      blogName: blogData.name,
+    });
   });
 
   it('GET /posts/:id should return entity by existing id', async () => {
-    const { createdEntity } = await postTestManager.createPostWithBlog(postBase, blogData);
+    const { createdEntity } = await postTestManager.createPostWithBlog(app, postBase, blogData);
     const response = await request(app)
       .get(`${routerPath.posts}/${createdEntity.id}`)
       .expect(HTTP_STATUSES.OK_200);
-    expect(response.body).toEqual(createdEntity);
+    expectPostViewModel(response.body, {
+      id: createdEntity.id,
+      title: postBase.title,
+      shortDescription: postBase.shortDescription,
+      content: postBase.content,
+      blogId: createdEntity.blogId,
+      blogName: blogData.name,
+    });
   });
 
   it('GET /posts/:id should return 404 for non-existing id', async () => {
-    await request(app).get(`${routerPath.posts}/9999`).expect(HTTP_STATUSES.NOT_FOUND_404);
+    await request(app)
+      .get(`${routerPath.posts}/aaaaaaaaaaaaaaaaaaaaaaaa`)
+      .expect(HTTP_STATUSES.NOT_FOUND_404);
   });
 
   it('PUT /posts/:id should update the entity by id with correct input data', async () => {
-    const { createdEntity } = await postTestManager.createPostWithBlog(postBase, blogData);
+    const { createdEntity } = await postTestManager.createPostWithBlog(app, postBase, blogData);
 
     const updatedData: PostInputModelDto = {
       title: 'Updated' + createdEntity.title,
@@ -70,16 +91,21 @@ const ADMIN_AUTH = generateBasicAuthHeader(
       .send(updatedData)
       .expect(HTTP_STATUSES.NO_CONTENT_204);
 
-    await request(app)
+    const response = await request(app)
       .get(`${routerPath.posts}/${createdEntity.id}`)
-      .expect(HTTP_STATUSES.OK_200, {
-        ...createdEntity,
-        ...updatedData,
-      });
+      .expect(HTTP_STATUSES.OK_200);
+    expectPostViewModel(response.body, {
+      id: createdEntity.id,
+      title: updatedData.title,
+      shortDescription: updatedData.shortDescription,
+      content: updatedData.content,
+      blogId: updatedData.blogId,
+      blogName: blogData.name,
+    });
   });
 
   it('DELETE /posts/:id should delete the entity by id', async () => {
-    const { createdEntity } = await postTestManager.createPostWithBlog(postBase, blogData);
+    const { createdEntity } = await postTestManager.createPostWithBlog(app, postBase, blogData);
     await request(app)
       .delete(`${routerPath.posts}/${createdEntity.id}`)
       .set('Authorization', ADMIN_AUTH)
@@ -87,5 +113,7 @@ const ADMIN_AUTH = generateBasicAuthHeader(
     await request(app)
       .get(`${routerPath.posts}/${createdEntity.id}`)
       .expect(HTTP_STATUSES.NOT_FOUND_404);
+    const list = await request(app).get(routerPath.posts).expect(HTTP_STATUSES.OK_200);
+    expect(list.body).toHaveLength(0);
   });
 });

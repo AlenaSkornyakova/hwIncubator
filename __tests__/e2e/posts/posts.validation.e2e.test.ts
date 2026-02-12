@@ -1,5 +1,4 @@
 import request from 'supertest';
-import { app } from '../../../src/set-app';
 import { routerPath } from '../../../src/core/paths/paths';
 import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
 import { PostInputModelDto } from '../../../src/features/posts/dto/posts.input-model.dto';
@@ -8,6 +7,7 @@ import { BlogInputModelDto } from '../../../src/features/blogs/dto/blogs.input-m
 import { clearDb } from '../../utils/clear-db';
 import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';
+import { createTestApp } from '../../utils/createTestApp';
 
 describe('Posts API body validation check', () => {
  
@@ -15,13 +15,13 @@ const ADMIN_AUTH = generateBasicAuthHeader(
   TEST_ADMIN_USERNAME,
   TEST_ADMIN_PASSWORD,
 );
+const app = createTestApp();
+  
 
   beforeEach(async () => {
     await clearDb(app);
   });
-  afterEach(async () => {
-    await clearDb(app);
-  });
+
 
   const blogData: BlogInputModelDto = {
     name: 'Test Blog Name',
@@ -36,9 +36,11 @@ const ADMIN_AUTH = generateBasicAuthHeader(
   };
   it('POST /posts should not create post when incorrect body passed.', async () => {
     const { createdEntity: correctPostData } = await postTestManager.createPostWithBlog(
+      app,
       postData,
       blogData,
     );
+
     //  несколько полей плохие
     const invalidDataSet1 = await request(app)
       .post(routerPath.posts)
@@ -53,19 +55,17 @@ const ADMIN_AUTH = generateBasicAuthHeader(
 
     expect(invalidDataSet1.body.errorsMessages).toHaveLength(3);
 
-    //  blogId не существует
+    //  blogId 
     const invalidDataSet2 = await request(app)
       .post(routerPath.posts)
       .set('Authorization', ADMIN_AUTH)
       .send({
         ...correctPostData,
-        blogId: 'non-existing-id',
+        blogId: 123,
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
-
     expect(invalidDataSet2.body.errorsMessages).toHaveLength(1);
     
-
     const list = await request(app).get(routerPath.posts)
     .set('Authorization', ADMIN_AUTH)
     .expect(HTTP_STATUSES.OK_200);
@@ -75,6 +75,7 @@ const ADMIN_AUTH = generateBasicAuthHeader(
   it(' PUT /posts/:id should not update post when incorrect body passed.', async () => {
     
     const { createdEntity: correctPostData } = await postTestManager.createPostWithBlog(
+      app,
       postData,
       blogData,
     );
