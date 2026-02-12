@@ -18,12 +18,12 @@
   "packageManager": "pnpm@10.24.0",
   "dependencies": {
     "dotenv": "^17.2.4",
-    "express": "^5.2.1",
+    "express": "^4.22.1",
     "express-validator": "^7.3.1",
     "mongodb": "^7.1.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6",
+    "@types/express": "^4.17.25",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.2",
     "@types/supertest": "^6.0.3",
