@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 import { blogsRepository } from '../../blogs/repositories/blogs-db.repository';
 
-export const postInputValidation = [
+export const postBaseValidation = [
   body('title')
   .isString().withMessage('title must be a string')
   .trim()
@@ -19,6 +19,10 @@ export const postInputValidation = [
   .trim()
   .notEmpty().withMessage('content is required')
   .isLength({ min: 5, max: 1000 }).withMessage('content length must be <= 1000'),
+]
+
+export const postInputValidation = [
+  ...postBaseValidation,
 
   body('blogId')
   .isString().withMessage('blogId must be a string')
@@ -33,3 +37,7 @@ export const postInputValidation = [
     return true;
   }),
 ];
+
+export const createPostForBlogInputValidation = [
+  ...postBaseValidation,
+]

@@ -13,6 +13,7 @@ export const blogsRepository = {
     if (!ObjectId.isValid(id)) return null;
     return blogCollection.findOne({ _id: new ObjectId(id) });
   },
+
   async create(newBlog: Blog): Promise<WithId<Blog>> {
     const insertResult = await blogCollection.insertOne(newBlog);
     return { _id: insertResult.insertedId, ...newBlog };

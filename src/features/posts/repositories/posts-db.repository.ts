@@ -1,7 +1,7 @@
 import { Post } from '../types/post.type';
 import { PostInputModelDto } from '../dto/posts.input-model.dto';
 import { WithId, ObjectId } from 'mongodb';
-import { postCollection } from '../../../db/mongo.db';
+import { blogCollection, postCollection } from '../../../db/mongo.db';
 
 
 export const postsRepository = {
@@ -13,7 +13,10 @@ export const postsRepository = {
     if (!ObjectId.isValid(id)) return null;
     return postCollection.findOne({ _id: new ObjectId(id) });
   },
-
+   async findByBlogId(blogId: string): Promise<WithId<Post>[]> {
+    if (!ObjectId.isValid(blogId)) return [];
+    return postCollection.find({ blogId: blogId }).toArray();
+  },
   async create(newPost: Post): Promise<WithId<Post>> {
     const insertResult = await postCollection.insertOne(newPost);
     return { _id: insertResult.insertedId, ...newPost };
