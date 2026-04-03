@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithBody, RequestWithParams } from '../../../../core/types/request.types';
 import { BlogInputModelDto } from '../../dto/blogs.input-model.dto';
-import { blogsRepository } from '../../repositories/blogs-db.repository';
+import { blogsService } from '../../ application/blogs.service';
 
 export const updateBlogHandler = async (
   req: RequestWithParams<{ id: string }> & RequestWithBody<BlogInputModelDto>,
@@ -11,7 +11,7 @@ export const updateBlogHandler = async (
   try {
     const id = req.params.id;
 
-    const updated = await blogsRepository.updateById(id, req.body);
+    const updated = await blogsService.updateById(id, req.body);
 
     if (!updated) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);

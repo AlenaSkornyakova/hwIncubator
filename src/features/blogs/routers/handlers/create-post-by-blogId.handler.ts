@@ -3,13 +3,13 @@ import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithParams, RequestWithBody } from '../../../../core/types/request.types';
 import { postsRepository } from '../../../posts/repositories/posts-db.repository';
 import { Post } from '../../../posts/types/post.type';
-import { blogsRepository } from '../../repositories/blogs-db.repository';
+import { blogsService } from '../../ application/blogs.service';
 
 export const createPostByBlogIdHandler = async (
     req: RequestWithParams<{ id: string }> & RequestWithBody<Post>, res: Response) => {
   try {
     const blogId = req.params.id.toString();
-    const blog = await blogsRepository.findById(blogId);
+    const blog = await blogsService.findById(blogId);
     if (!blog) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }

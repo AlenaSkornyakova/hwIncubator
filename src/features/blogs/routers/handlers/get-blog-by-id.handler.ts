@@ -3,7 +3,7 @@ import { RequestWithParams } from '../../../../core/types/request.types';
 import { Response } from 'express';
 import { BlogViewModelDto } from '../../dto/blogs.view-model.dto';
 import { mapBlog } from '../mappers/map-to-blog-view-model.util';
-import { blogsRepository } from '../../repositories/blogs-db.repository';
+import { blogsService } from '../../ application/blogs.service';
 
 export const getBlogByIdHandler = async (
   req: RequestWithParams<{ id: string }>,
@@ -11,7 +11,7 @@ export const getBlogByIdHandler = async (
 ) => {
   try {
     const id = req.params.id;
-    const blog = await blogsRepository.findById(id);
+    const blog = await blogsService.findById(id);
     if (!blog) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }

@@ -4,24 +4,14 @@ import { RequestWithBody} from '../../../../core/types/request.types';
 import { mapBlog } from '../mappers/map-to-blog-view-model.util';
 import { BlogInputModelDto } from '../../dto/blogs.input-model.dto';
  import { BlogViewModelDto } from '../../dto/blogs.view-model.dto'; 
-import { Blog } from '../../types/blog.type';
-import { blogsRepository } from '../../repositories/blogs-db.repository';
+import { blogsService } from '../../ application/blogs.service';
 
 export const createBlogHandler = async (
   req: RequestWithBody<BlogInputModelDto>,
   res: Response<BlogViewModelDto>
 ) => {
   try {
-    const newBlog: Blog = {
-      name: req.body.name,
-      description: req.body.description,
-      websiteUrl: req.body.websiteUrl,
-      isMembership: false,
-      createdAt: new Date(),
-    };
-
-    const createdBlog = await blogsRepository.create(newBlog);
-
+    const createdBlog = await blogsService.create((req.body));
     return res
       .status(HTTP_STATUSES.CREATED_201)
       .json(mapBlog(createdBlog));

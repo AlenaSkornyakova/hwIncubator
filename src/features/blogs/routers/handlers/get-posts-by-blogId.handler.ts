@@ -1,7 +1,7 @@
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithParams } from '../../../../core/types/request.types';
 import { Response } from 'express';
-import { blogsRepository } from '../../repositories/blogs-db.repository';
+import { blogsService } from '../../ application/blogs.service';
 import { postsRepository } from '../../../posts/repositories/posts-db.repository';
 import { mapPost } from '../../../posts/routers/mappers/map-to-post-view-model.util';
 import { PostViewModelDto } from '../../../posts/dto/posts.view-model.dto';
@@ -15,7 +15,7 @@ import { PostViewModelDto } from '../../../posts/dto/posts.view-model.dto';
 ) => {
   try {
     const blogId = req.params.id;
-    const blog = await blogsRepository.findById(blogId);
+    const blog = await blogsService.findById(blogId);
     if (!blog) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }

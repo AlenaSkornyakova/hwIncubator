@@ -1,8 +1,7 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithParams } from '../../../../core/types/request.types';
-import { BlogViewModelDto } from '../../dto/blogs.view-model.dto';
-import { blogsRepository } from '../../repositories/blogs-db.repository';
+import { blogsService } from '../../ application/blogs.service';
 
 export const deleteBlogHandler = async(
   req: RequestWithParams<{ id: string }>,
@@ -10,7 +9,7 @@ export const deleteBlogHandler = async(
 ) => {
     try {
   const id = req.params.id;
-  const deleted = await blogsRepository.deleteById(id);
+  const deleted = await blogsService.deleteById(id);
   if (!deleted) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
   }
