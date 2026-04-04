@@ -11,13 +11,14 @@ import { paramsIdValidation } from '../../../core/middlewares/params-id.validati
 import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
 import { createPostByBlogIdHandler } from './handlers/create-post-by-blogId.handler';
 import { createPostForBlogInputValidation } from '../../posts/validation/post-input.validation';
+import { blogQueryValidation } from '../validation/blog-query.validation';
 
    
 
 export const blogsRouter = express.Router();
 
 blogsRouter
-.get('/', getBlogsListHandler)
+.get('/', blogQueryValidation, inputValidationResultMiddleware, getBlogsListHandler)
 .post('/', superAdminGuardMiddleware, blogInputValidation, inputValidationResultMiddleware,createBlogHandler )
 .post('/:id/posts', superAdminGuardMiddleware, paramsIdValidation, createPostForBlogInputValidation, inputValidationResultMiddleware, createPostByBlogIdHandler)
 .get('/:id', paramsIdValidation, inputValidationResultMiddleware, getBlogByIdHandler)

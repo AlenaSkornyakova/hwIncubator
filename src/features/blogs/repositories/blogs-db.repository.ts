@@ -1,13 +1,34 @@
 import { BlogInputModelDto } from '../dto/blogs.input-model.dto';
 import { blogCollection } from '../../../db/mongo.db';
-import { ObjectId, WithId } from 'mongodb';
+import { Filter, ObjectId, WithId } from 'mongodb';
 import { Blog } from '../types/blog.type';
-
+import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
+import {BlogsQueryInput} from '../types/blogs-query-input';
 
 export const blogsRepository = {
-  async findAll(): Promise<WithId<Blog>[]> {
-    return blogCollection.find({}).toArray();
-  },
+
+  async findMany(normalizedQuery: BlogsQueryInput
+  ): Promise<PaginatedBlogsDbResultDto> {
+  const skip = (normalizedQuery.pageNumber - 1) * normalizedQuery.pageSize;
+  const filter: Filter<Blog> = {};
+  if (normalizedQuery.searchNameTerm) {
+    filter.name = { $regex: normalizedQuery.searchNameTerm, $options: 'i' };
+  }
+  const items = await blogCollection
+    .find(filter)
+    .sort({ [normalizedQuery.sortBy]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
+    .skip(skip)
+    .limit(normalizedQuery.pageSize)
+    .toArray();
+  const totalCount = await blogCollection.countDocuments(filter);
+  return {
+    pagesCount: Math.ceil(totalCount / normalizedQuery.pageSize),
+    page: normalizedQuery.pageNumber,
+    pageSize: normalizedQuery.pageSize,
+    totalCount: totalCount,
+    items: items,
+  };
+},
 
   async findById(id: string): Promise<WithId<Blog> | null> {
     if (!ObjectId.isValid(id)) return null;

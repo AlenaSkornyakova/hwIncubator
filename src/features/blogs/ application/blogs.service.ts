@@ -2,12 +2,15 @@ import { BlogInputModelDto } from '../dto/blogs.input-model.dto';
 import { blogsRepository } from '../repositories/blogs-db.repository';
 import { WithId } from 'mongodb';
 import { Blog } from '../types/blog.type';
+import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
+import { BlogsQueryInputModelDto } from '../dto/blogs.query-input-model.dto';
+import { BlogsQueryInput } from '../types/blogs-query-input';
 
 
 
 export const blogsService = {
-  async findAll(): Promise<WithId<Blog>[]> {
-    return await blogsRepository.findAll();
+  async findMany(queryInput:BlogsQueryInput ): Promise<PaginatedBlogsDbResultDto> {
+    return await blogsRepository.findMany(queryInput);
   },
 
   async findById(id: string): Promise<WithId<Blog> | null> {

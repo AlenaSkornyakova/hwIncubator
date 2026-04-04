@@ -1,0 +1,36 @@
+import { query } from "express-validator";
+import { blogSortFields } from "../types/blog-sort-fields";
+import { sortDirections } from "../../../core/types/sort-direction";
+
+
+export const blogQueryValidation = 
+[
+  // pageNumber
+query ('pageNumber')
+.optional()
+.isInt({ min: 1 })
+.withMessage('pageNumber must be an integer greater than 0')
+.toInt(),
+// pageSize
+query('pageSize')
+.optional()
+.isInt({ min: 1, max: 100 })
+.withMessage('pageSize must be an integer between 1 and 100')
+.toInt(),
+// searchNameTerm
+query('searchNameTerm')
+.optional()
+.isString()
+.isLength({ min: 1, max: 100 })
+.withMessage('searchNameTerm must be a string with length between 1 and 100'),
+// sortBy
+query('sortBy')
+.optional()
+.isIn( blogSortFields)
+.withMessage('sortBy must be either "name", "createdAt", "id", "description", or "websiteUrl"'),
+// sortDirection
+query('sortDirection')
+.optional()
+.isIn(sortDirections)
+.withMessage('sortDirection must be either "asc" or "desc"'),
+];  
