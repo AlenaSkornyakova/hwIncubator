@@ -34,7 +34,7 @@ export const getBlogsListHandler = async (
 
     const blogs = await blogsService.findMany(queryInput);
 
-    return res.status(200).json({
+    return res.status(HTTP_STATUSES.OK_200).json({
       ...blogs,
       items: blogs.items.map(mapBlog),
     });

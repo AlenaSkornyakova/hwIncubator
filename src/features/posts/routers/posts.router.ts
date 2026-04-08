@@ -8,10 +8,12 @@ import { inputValidationResultMiddleware } from '../../../core/middlewares/input
 import { postInputValidation } from '../validation/post-input.validation';
 import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
 import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
+import { postQueryValidation } from '../validation/post-query.validation';
+
 export const postsRouter = express.Router();
 
   postsRouter
-.get('/', getPostsListHandler)
+.get('/', postQueryValidation, inputValidationResultMiddleware, getPostsListHandler)
 .post('/',  superAdminGuardMiddleware, postInputValidation, inputValidationResultMiddleware, createPostHandler,)
 .get('/:id',  paramsIdValidation,inputValidationResultMiddleware,getPostByIdHandler)
 .put('/:id', superAdminGuardMiddleware, paramsIdValidation, postInputValidation, inputValidationResultMiddleware, updatePostHandler) 

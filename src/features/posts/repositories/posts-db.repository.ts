@@ -1,12 +1,31 @@
 import { Post } from '../types/post.type';
 import { PostInputModelDto } from '../dto/posts.input-model.dto';
-import { WithId, ObjectId } from 'mongodb';
+import { WithId, ObjectId, Filter } from 'mongodb';
 import { blogCollection, postCollection } from '../../../db/mongo.db';
+import { PostsQueryInput } from '../types/posts-query-input';
+import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
 
 
 export const postsRepository = {
-  async findAll(): Promise<WithId<Post>[]> {
-    return postCollection.find({}).toArray();
+    async findMany(normalizedQuery: PostsQueryInput
+    ): Promise<PaginatedPostsDbResultDto> {
+    const skip = (normalizedQuery.pageNumber - 1) * normalizedQuery.pageSize;
+
+  
+    const items = await postCollection
+      .find()
+      .sort({ [normalizedQuery.sortBy]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
+      .skip(skip)
+      .limit(normalizedQuery.pageSize)
+      .toArray();
+    const totalCount = await postCollection.countDocuments();
+    return {
+      pagesCount: Math.ceil(totalCount / normalizedQuery.pageSize),
+      page: normalizedQuery.pageNumber,
+      pageSize: normalizedQuery.pageSize,
+      totalCount: totalCount,
+      items: items,
+    };
   },
 
   async findById(id: string): Promise<WithId<Post> | null> {
@@ -35,19 +54,12 @@ export const postsRepository = {
         },
       },
     );
-
-    if (updateResult.modifiedCount < 1) {
-      return false;
-    }
-    return true;
+   return updateResult.matchedCount === 1;
   },
 
   async delete(id: string): Promise<boolean> {
     if (!ObjectId.isValid(id)) return false;
     const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(id) });
-    if (deleteResult.deletedCount < 1) {
-      return false;
-    }
-    return true;
+    return deleteResult.deletedCount === 1;
   },
 };

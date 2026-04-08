@@ -1,6 +1,7 @@
 
-import { SortDirection} from 'mongodb';
+import { SortDirection} from '../../../core/types/sort-direction';
 import { BlogSortBy } from './blog-sort-fields';
+
 
 export type BlogsQueryInput = {
   pageNumber: number;
