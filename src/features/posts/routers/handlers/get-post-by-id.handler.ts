@@ -3,7 +3,7 @@ import { RequestWithParams } from '../../../../core/types/request.types';
 import { Response } from 'express';
 import { PostViewModelDto } from '../../dto/posts.view-model.dto';
 import { mapPost } from '../mappers/map-to-post-view-model.util';
-import { postsRepository } from '../../repositories/posts-db.repository';
+import { postsService } from '../../application/posts.service';
 
 export const getPostByIdHandler = async (
   req: RequestWithParams<{ id: string }>,
@@ -11,7 +11,7 @@ export const getPostByIdHandler = async (
 ) => {
   try {
     const id = req.params.id;
-    const post = await postsRepository.findById(id);
+    const post = await postsService.findById(id);
 
     if (!post) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);

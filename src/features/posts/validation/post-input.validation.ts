@@ -6,19 +6,19 @@ export const postBaseValidation = [
   .isString().withMessage('title must be a string')
   .trim()
   .notEmpty().withMessage('title is required')
-  .isLength({ min: 2, max: 30 }).withMessage('title length must be <= 30'),
+  .isLength({ min: 2, max: 30 }).withMessage('title length must be min: 2, max: 30'),
 
   body('shortDescription')
   .isString().withMessage('shortDescription must be a string')
   .trim()
   .notEmpty().withMessage('shortDescription is required') 
-  .isLength({min: 2, max: 100 }).withMessage('shortDescription length must be <= 100'),
+  .isLength({min: 2, max: 100 }).withMessage('shortDescription length must be min: 2, max: 100'),
 
   body('content')
   .isString().withMessage('content must be a string')
   .trim()
   .notEmpty().withMessage('content is required')
-  .isLength({ min: 5, max: 1000 }).withMessage('content length must be <= 1000'),
+  .isLength({ min: 5, max: 1000 }).withMessage('content length must be min: 5, max: 1000'),
 ]
 
 export const postInputValidation = [

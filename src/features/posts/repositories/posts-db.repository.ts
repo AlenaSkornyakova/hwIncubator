@@ -1,24 +1,31 @@
 import { Post } from '../types/post.type';
 import { PostInputModelDto } from '../dto/posts.input-model.dto';
 import { WithId, ObjectId, Filter } from 'mongodb';
-import { blogCollection, postCollection } from '../../../db/mongo.db';
+import { postCollection } from '../../../db/mongo.db';
 import { PostsQueryInput } from '../types/posts-query-input';
 import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
 
-
 export const postsRepository = {
-    async findMany(normalizedQuery: PostsQueryInput
-    ): Promise<PaginatedPostsDbResultDto> {
+  async findMany(
+    normalizedQuery: PostsQueryInput,
+    blogId?: string,
+  ): Promise<PaginatedPostsDbResultDto> {
+    const filter: Filter<Post> = {};
+    if (blogId) {
+      filter.blogId = blogId;
+    }
     const skip = (normalizedQuery.pageNumber - 1) * normalizedQuery.pageSize;
+    const sortField = normalizedQuery.sortBy === 'id'
+  ? '_id'
+  : normalizedQuery.sortBy;
 
-  
     const items = await postCollection
-      .find()
-      .sort({ [normalizedQuery.sortBy]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
+      .find(filter)
+      .sort({ [sortField]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
       .skip(skip)
       .limit(normalizedQuery.pageSize)
       .toArray();
-    const totalCount = await postCollection.countDocuments();
+    const totalCount = await postCollection.countDocuments(filter);
     return {
       pagesCount: Math.ceil(totalCount / normalizedQuery.pageSize),
       page: normalizedQuery.pageNumber,
@@ -32,7 +39,7 @@ export const postsRepository = {
     if (!ObjectId.isValid(id)) return null;
     return postCollection.findOne({ _id: new ObjectId(id) });
   },
-   async findByBlogId(blogId: string): Promise<WithId<Post>[]> {
+  async findByBlogId(blogId: string): Promise<WithId<Post>[]> {
     if (!ObjectId.isValid(blogId)) return [];
     return postCollection.find({ blogId: blogId }).toArray();
   },
@@ -54,7 +61,7 @@ export const postsRepository = {
         },
       },
     );
-   return updateResult.matchedCount === 1;
+    return updateResult.matchedCount === 1;
   },
 
   async delete(id: string): Promise<boolean> {

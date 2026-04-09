@@ -15,8 +15,8 @@ export const getBlogsListHandler = async (
   const DEFAULT_PAGE_NUMBER = 1;
   const DEFAULT_PAGE_SIZE = 10;
   const DEFAULT_SEARCH_NAME_TERM = null;
-  const DEFAULT_SORT_BY = 'createdAt';
-  const DEFAULT_SORT_DIRECTION = 'desc';
+  const DEFAULT_SORT_BY: BlogsQueryInput['sortBy'] = 'createdAt';
+  const DEFAULT_SORT_DIRECTION: BlogsQueryInput['sortDirection'] = 'desc';
   
   try {
     const sanitizedQuery = matchedData<BlogsQueryInput>(req, {

@@ -2,11 +2,10 @@ import { Request, Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { PostViewModelDto } from '../../dto/posts.view-model.dto';
 import { mapPost } from '../mappers/map-to-post-view-model.util';
-import { postsRepository } from '../../repositories/posts-db.repository';
 import { RequestWithQuery } from '../../../../core/types/request.types';
 import { PostsQueryInput } from '../../types/posts-query-input';
 import { PostsQueryInputModelDto } from '../../dto/posts.query-imput.dto';
-import { postsService } from '../../ application/posts.service';
+import { postsService } from '../../application/posts.service';
 import { matchedData } from 'express-validator/lib/matched-data';
 import { PaginatedPostsViewModelDto } from '../../dto/posts.paginated-view.model.dto';
 
@@ -16,8 +15,8 @@ export const getPostsListHandler = async (
 ) => {
   const DEFAULT_PAGE_NUMBER = 1;
   const DEFAULT_PAGE_SIZE = 10;
-  const DEFAULT_SORT_BY = 'createdAt';
-  const DEFAULT_SORT_DIRECTION = 'desc';
+  const DEFAULT_SORT_BY: PostsQueryInput['sortBy'] = 'createdAt';
+  const DEFAULT_SORT_DIRECTION: PostsQueryInput['sortDirection'] = 'desc';
   try {
     const sanitizedQuery = matchedData<PostsQueryInput>(req, {
       locations: ['query'],

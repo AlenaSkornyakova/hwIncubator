@@ -10,8 +10,8 @@ import { BlogNotFoundError } from './errors';
 
 
 export const postsService = {
-  async findMany(queryInput:PostsQueryInput ): Promise<PaginatedPostsDbResultDto> {
-    return await postsRepository.findMany(queryInput);
+  async findMany(queryInput:PostsQueryInput, blogId?: string ): Promise<PaginatedPostsDbResultDto> {
+    return await postsRepository.findMany(queryInput, blogId);
   },
 
   async findById(id: string): Promise<WithId<Post> | null> {

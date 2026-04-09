@@ -1,8 +1,7 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithParams } from '../../../../core/types/request.types';
-import { PostViewModelDto } from '../../dto/posts.view-model.dto';
-import { postsRepository } from '../../repositories/posts-db.repository';
+import { postsService } from '../../application/posts.service';
 
 export const deletePostHandler = async (
   req: RequestWithParams<{ id: string }>,
@@ -10,7 +9,7 @@ export const deletePostHandler = async (
 ) => {
   try {
     const id = req.params.id;
-    const deleted = await postsRepository.delete(id);
+    const deleted = await postsService.deleteById(id);
     if (!deleted) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }

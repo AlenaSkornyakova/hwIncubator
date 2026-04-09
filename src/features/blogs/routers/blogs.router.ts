@@ -12,6 +12,7 @@ import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admi
 import { createPostByBlogIdHandler } from './handlers/create-post-by-blogId.handler';
 import { createPostForBlogInputValidation } from '../../posts/validation/post-input.validation';
 import { blogQueryValidation } from '../validation/blog-query.validation';
+import { postQueryValidation } from '../../posts/validation/post-query.validation';
 
    
 
@@ -22,6 +23,6 @@ blogsRouter
 .post('/', superAdminGuardMiddleware, blogInputValidation, inputValidationResultMiddleware,createBlogHandler )
 .post('/:id/posts', superAdminGuardMiddleware, paramsIdValidation, createPostForBlogInputValidation, inputValidationResultMiddleware, createPostByBlogIdHandler)
 .get('/:id', paramsIdValidation, inputValidationResultMiddleware, getBlogByIdHandler)
-.get ('/:id/posts',paramsIdValidation, inputValidationResultMiddleware, getPostsByBlogIdHandler)
+.get ('/:id/posts',paramsIdValidation,  postQueryValidation, inputValidationResultMiddleware, getPostsByBlogIdHandler)
 .put('/:id', superAdminGuardMiddleware, paramsIdValidation, blogInputValidation, inputValidationResultMiddleware, updateBlogHandler)
 .delete('/:id', superAdminGuardMiddleware, paramsIdValidation, inputValidationResultMiddleware, deleteBlogHandler)

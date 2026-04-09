@@ -14,9 +14,12 @@ export const blogsRepository = {
   if (normalizedQuery.searchNameTerm) {
     filter.name = { $regex: normalizedQuery.searchNameTerm, $options: 'i' };
   }
+  const sortField = normalizedQuery.sortBy === 'id'
+  ? '_id'
+  : normalizedQuery.sortBy;
   const items = await blogCollection
     .find(filter)
-    .sort({ [normalizedQuery.sortBy]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
+    .sort({ [sortField]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
     .skip(skip)
     .limit(normalizedQuery.pageSize)
     .toArray();

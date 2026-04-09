@@ -6,4 +6,5 @@ export type PostsQueryInput = {
   pageSize: number;
   sortBy: PostSortBy;
   sortDirection: SortDirection;
+  searchTitleTerm?: string;
 };
