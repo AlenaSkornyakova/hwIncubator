@@ -69,7 +69,11 @@ const app = createTestApp();
     const list = await request(app).get(routerPath.posts)
     .set('Authorization', ADMIN_AUTH)
     .expect(HTTP_STATUSES.OK_200);
-    expect(list.body).toHaveLength(1);
+    expect(list.body.items).toHaveLength(1);
+    expect(list.body.totalCount).toBe(1);
+    expect(list.body.page).toBe(1);
+    expect(list.body.pageSize).toBe(10);
+    expect(list.body.pagesCount).toBe(1);
   });
 
   it(' PUT /posts/:id should not update post when incorrect body passed.', async () => {

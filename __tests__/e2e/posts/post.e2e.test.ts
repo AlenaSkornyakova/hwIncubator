@@ -31,7 +31,13 @@ describe('Post API CRUD', () => {
   };
 
   it('GET /posts should return 200 and an empty array. The server is alive, the route is connected, and the contract is honored.', async () => {
-    await request(app).get(routerPath.posts).expect(HTTP_STATUSES.OK_200, []);
+    await request(app).get(routerPath.posts).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 0,
+      page: 1,
+      pageSize: 10,
+      totalCount: 0,
+      items: [],
+    });
   });
 
   it('POST /posts should create a new entity and return it', async () => {
@@ -44,13 +50,18 @@ describe('Post API CRUD', () => {
       blogName: blogData.name,
     });
     const list = await request(app).get(`${routerPath.posts}`).expect(HTTP_STATUSES.OK_200);
-    expect(list.body).toHaveLength(1);
-    expectPostViewModel(list.body[0], {
+    expect(list.body.items).toHaveLength(1);
+    expect(list.body.totalCount).toBe(1);
+    expect(list.body.page).toBe(1);
+    expect(list.body.pageSize).toBe(10);
+    expect(list.body.pagesCount).toBe(1);
+
+    expectPostViewModel(list.body.items[0], {
       title: postBase.title,
       shortDescription: postBase.shortDescription,
       content: postBase.content,
       blogId: createdEntity.blogId,
-      blogName: blogData.name,
+      blogName: createdEntity.blogName,
     });
   });
 
@@ -114,6 +125,10 @@ describe('Post API CRUD', () => {
       .get(`${routerPath.posts}/${createdEntity.id}`)
       .expect(HTTP_STATUSES.NOT_FOUND_404);
     const list = await request(app).get(routerPath.posts).expect(HTTP_STATUSES.OK_200);
-    expect(list.body).toHaveLength(0);
+    expect(list.body.items).toHaveLength(0);
+    expect(list.body.totalCount).toBe(0);
+    expect(list.body.page).toBe(1);
+    expect(list.body.pageSize).toBe(10);
+    expect(list.body.pagesCount).toBe(0);
   });
 });

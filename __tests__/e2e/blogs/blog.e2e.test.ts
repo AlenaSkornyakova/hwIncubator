@@ -24,26 +24,35 @@ describe('Blog API CRUD', () => {
     websiteUrl: 'https://testblog.com',
   };
 
-  
   it('GET /blogs should return 200 and an empty array. The server is alive, the route is connected, and the contract is honored.', async () => {
-    await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200, []);
+    await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 0,
+      page: 1,
+      pageSize: 10,
+      totalCount: 0,
+      items: [],
+    });
   });
 
   it('POST /blogs should create a new entity with correct input data and return it', async () => {
     const { createdEntity } = await blogTestManager.createBlog(app, blogData);
     expectBlogViewModel(createdEntity, blogData);
     const list = await request(app).get(`${routerPath.blogs}`).expect(HTTP_STATUSES.OK_200);
-    expect(list.body).toHaveLength(1);
-    expectBlogViewModel(list.body[0], blogData);
+    expect(list.body.items).toHaveLength(1);
+    expect(list.body.totalCount).toBe(1);
+    expect(list.body.page).toBe(1);
+    expect(list.body.pageSize).toBe(10);
+    expect(list.body.pagesCount).toBe(1);
+    expectBlogViewModel(list.body.items[0], blogData);
   });
 
   it('GET /blogs should return 200 and an array of existing entities', async () => {
     await blogTestManager.createBlog(app, blogData);
     const response = await request(app).get(`${routerPath.blogs}`).expect(HTTP_STATUSES.OK_200);
 
-    expect(Array.isArray(response.body)).toBe(true);
-    expect(response.body).toHaveLength(1);
-    expectBlogViewModel(response.body[0], blogData);
+    expect(Array.isArray(response.body.items)).toBe(true);
+    expect(response.body.items).toHaveLength(1);
+    expectBlogViewModel(response.body.items[0], blogData);
   });
 
   it('GET /blogs/:id should return entity by existing id', async () => {
@@ -92,6 +101,10 @@ describe('Blog API CRUD', () => {
       .get(`${routerPath.blogs}/${createdEntity.id}`)
       .expect(HTTP_STATUSES.NOT_FOUND_404);
     const list = await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200);
-    expect(list.body).toHaveLength(0);
+    expect(list.body.items).toHaveLength(0);
+    expect(list.body.totalCount).toBe(0);
+    expect(list.body.page).toBe(1);
+    expect(list.body.pageSize).toBe(10);
+    expect(list.body.pagesCount).toBe(0);
   });
 });

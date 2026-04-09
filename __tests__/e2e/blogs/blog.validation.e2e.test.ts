@@ -51,7 +51,11 @@ describe('Blog API body validation check', () => {
     expect(invalidDataSet2.body.errorsMessages).toHaveLength(1);
 
     const list = await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200);
-    expect(list.body).toHaveLength(0);
+    expect(list.body.items).toHaveLength(0);
+    expect(list.body.totalCount).toBe(0);
+    expect(list.body.page).toBe(1);
+    expect(list.body.pageSize).toBe(10);
+    expect(list.body.pagesCount).toBe(0);
   });
 
   it(' PUT /blogs/:id should not update blog when incorrect body passed.', async () => {
