@@ -1,8 +1,8 @@
-import { Post } from '../types/post.type';
-import { PostInputModelDto } from '../dto/posts.input-model.dto';
+import { Post } from '../routers/domain/post.type';
+import { PostCreateInput } from '../routers/input/post-create.input';
 import { WithId, ObjectId, Filter } from 'mongodb';
 import { postCollection } from '../../../db/mongo.db';
-import { PostsQueryInput } from '../types/posts-query-input';
+import { PostsQueryInput } from '../routers/input/posts-query-input';
 import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
 
 export const postsRepository = {
@@ -48,7 +48,7 @@ export const postsRepository = {
     return { _id: insertResult.insertedId, ...newPost };
   },
 
-  async update(id: string, dto: PostInputModelDto): Promise<boolean> {
+  async update(id: string, dto: PostCreateInput): Promise<boolean> {
     if (!ObjectId.isValid(id)) return false;
     const updateResult = await postCollection.updateOne(
       { _id: new ObjectId(id) },

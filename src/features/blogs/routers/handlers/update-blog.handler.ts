@@ -1,11 +1,11 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithBody, RequestWithParams } from '../../../../core/types/request.types';
-import { BlogInputModelDto } from '../../dto/blogs.input-model.dto';
+import { BlogCreateInput } from '../input/blog-crete.input';
 import { blogsService } from '../../ application/blogs.service';
 
 export const updateBlogHandler = async (
-  req: RequestWithParams<{ id: string }> & RequestWithBody<BlogInputModelDto>,
+  req: RequestWithParams<{ id: string }> & RequestWithBody<BlogCreateInput>,
   res: Response,
 ) => {
   try {

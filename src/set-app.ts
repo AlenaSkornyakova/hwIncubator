@@ -1,8 +1,8 @@
 import express from 'express';
 import type { Application, Request, Response, NextFunction } from 'express';
 
-import { postsRouter } from './features/posts/routers/posts.router';
-import { blogsRouter } from './features/blogs/routers/blogs.router';
+import { postsRouter } from './features/posts/routers/posts.route';
+import { blogsRouter } from './features/blogs/routers/blogs.route';
 import { testsRouter } from './testing/routers/testing.router';
 import { routerPath } from './core/paths/paths';
 

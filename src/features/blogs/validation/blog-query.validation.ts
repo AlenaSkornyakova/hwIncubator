@@ -1,6 +1,6 @@
 import { query } from "express-validator";
-import { blogSortFields } from "../types/blog-sort-fields";
-import { sortDirections } from "../../../core/types/sort-direction";
+import { blogSortFields } from "../routers/input/blog-sort-fields";
+import { sortDirections } from "../../../core/types/sort-direction.types";
 
 
 export const blogQueryValidation = 

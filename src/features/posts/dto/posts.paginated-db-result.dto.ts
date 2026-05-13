@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { Post } from '../types/post.type';
+import { Post } from '../routers/domain/post.type';
 
 
 export type PaginatedPostsDbResultDto = {

@@ -1,5 +1,5 @@
 
-export interface PostInputModelDto {
+export interface PostCreateInput {
   title: string;
   shortDescription: string;
   content: string;

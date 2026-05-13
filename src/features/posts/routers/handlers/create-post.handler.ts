@@ -1,21 +1,21 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { PostViewModelDto } from '../../dto/posts.view-model.dto';
-import { PostInputModelDto } from '../../dto/posts.input-model.dto';
+import { PostOutput } from '../output/post.output';
+import { PostCreateInput } from '../input/post-create.input';
 import { RequestWithBody } from '../../../../core/types/request.types';
-import { mapPost } from '../mappers/map-to-post-view-model.util';
+import { mapToPostOutput } from '../mappers/map-post-output.util';
 import { postsService } from '../../application/posts.service';
 import { BlogNotFoundError } from '../../application/errors';
 
 
 export const createPostHandler = async (
-  req: RequestWithBody<PostInputModelDto>,
-  res: Response<PostViewModelDto> & Response<{ errorsMessages: { field: string; message: string }[] }>,
+  req: RequestWithBody<PostCreateInput>,
+  res: Response<PostOutput> & Response<{ errorsMessages: { field: string; message: string }[] }>,
 ) => {
   try {
     const dto = req.body;
     const createdPost = await postsService.create(dto);
-    return res.status(HTTP_STATUSES.CREATED_201).json(mapPost(createdPost));
+    return res.status(HTTP_STATUSES.CREATED_201).json(mapToPostOutput(createdPost));
   } catch (error) {
     if (error instanceof BlogNotFoundError) {
       return res.status(HTTP_STATUSES.BAD_REQUEST_400).json({

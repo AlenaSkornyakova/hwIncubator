@@ -1,9 +1,9 @@
-import { BlogInputModelDto } from '../dto/blogs.input-model.dto';
+import { BlogCreateInput } from '../routers/input/blog-crete.input';
 import { blogCollection } from '../../../db/mongo.db';
 import { Filter, ObjectId, WithId } from 'mongodb';
-import { Blog } from '../types/blog.type';
+import { Blog } from '../domain/blog.type';
 import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
-import {BlogsQueryInput} from '../types/blogs-query-input';
+import {BlogsQueryInput} from '../routers/input/blogs-query-input';
 
 export const blogsRepository = {
 
@@ -25,12 +25,9 @@ export const blogsRepository = {
     .toArray();
   const totalCount = await blogCollection.countDocuments(filter);
   return {
-    pagesCount: Math.ceil(totalCount / normalizedQuery.pageSize),
-    page: normalizedQuery.pageNumber,
-    pageSize: normalizedQuery.pageSize,
-    totalCount: totalCount,
-    items: items,
-  };
+  items,
+  totalCount,
+};
 },
 
   async findById(id: string): Promise<WithId<Blog> | null> {
@@ -43,7 +40,7 @@ export const blogsRepository = {
     return { _id: insertResult.insertedId, ...newBlog };
   },
 
-  async updateById(id: string, dto: BlogInputModelDto): Promise<boolean> {
+  async updateById(id: string, dto: BlogCreateInput): Promise<boolean> {
     if (!ObjectId.isValid(id)) return false;
 
     const updateResult = await blogCollection.updateOne(

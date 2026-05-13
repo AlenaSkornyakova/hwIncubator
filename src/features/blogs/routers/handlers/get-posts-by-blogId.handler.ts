@@ -1,54 +1,71 @@
-import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithParams } from '../../../../core/types/request.types';
 import { Response } from 'express';
-import { blogsService } from '../../ application/blogs.service';
-import { mapPost } from '../../../posts/routers/mappers/map-to-post-view-model.util';
-import { PaginatedPostsViewModelDto } from '../../../posts/dto/posts.paginated-view.model.dto';
 import { matchedData } from 'express-validator/lib/matched-data';
+
+import { HTTP_STATUSES } from '../../../../core/utils/http-status';
+import {
+  RequestWithParams,
+  RequestWithQuery,
+} from '../../../../core/types/request.types';
+
+import { blogsService } from '../../ application/blogs.service';
 import { postsService } from '../../../posts/application/posts.service';
-import { PostsQueryInput } from '../../../posts/types/posts-query-input'; 
-import { RequestWithQuery } from '../../../../core/types/request.types';
-import { PostsQueryInputModelDto } from '../../../posts/dto/posts.query-imput.dto';
 
+import { PostListPaginatedOutput } from '../../../posts/routers/output/post-list-paginated.output';
 
+import { PostsQueryInput } from '../../../posts/routers/input/posts-query-input';
+
+import { mapToPostListPaginatedOutput } from '../../../posts/routers/mappers/map-post-list-paginated-output.util';
 
 export const getPostsByBlogIdHandler = async (
-  req: RequestWithParams<{ id: string }>& RequestWithQuery<PostsQueryInputModelDto>,
-  res: Response<PaginatedPostsViewModelDto>,
+  req: RequestWithParams<{ id: string }> &
+    RequestWithQuery<PostsQueryInput>,
+  res: Response<PostListPaginatedOutput>,
 ) => {
   const DEFAULT_PAGE_NUMBER = 1;
   const DEFAULT_PAGE_SIZE = 10;
   const DEFAULT_SORT_BY: PostsQueryInput['sortBy'] = 'createdAt';
   const DEFAULT_SORT_DIRECTION: PostsQueryInput['sortDirection'] = 'desc';
 
- 
   try {
-    const sanitizedQuery = matchedData<PostsQueryInput>(req, {
-      locations: ['query' ],
+    const sanitizedQuery = matchedData<Partial<PostsQueryInput>>(req, {
+      locations: ['query'],
       includeOptionals: true,
     });
 
     const queryInput: PostsQueryInput = {
-          pageNumber: sanitizedQuery.pageNumber ?? DEFAULT_PAGE_NUMBER,
-          pageSize: sanitizedQuery.pageSize ?? DEFAULT_PAGE_SIZE,
-          sortBy: sanitizedQuery.sortBy ?? DEFAULT_SORT_BY,
-          sortDirection: sanitizedQuery.sortDirection ?? DEFAULT_SORT_DIRECTION,
-        };
-         
+      pageNumber: sanitizedQuery.pageNumber ?? DEFAULT_PAGE_NUMBER,
+      pageSize: sanitizedQuery.pageSize ?? DEFAULT_PAGE_SIZE,
+      sortBy: sanitizedQuery.sortBy ?? DEFAULT_SORT_BY,
+      sortDirection:
+        sanitizedQuery.sortDirection ?? DEFAULT_SORT_DIRECTION,
+    };
+
     const blogId = req.params.id;
 
+    // проверка существования блога
     const blog = await blogsService.findById(blogId);
+
     if (!blog) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }
-    const posts = await postsService.findMany( queryInput, blogId,);
 
-    return res.status(HTTP_STATUSES.OK_200).json({
-      ...posts, 
-      items: posts.items.map(mapPost)
+    const { items, totalCount } = await postsService.findMany(
+      queryInput,
+      blogId,
+    );
+
+    const output = mapToPostListPaginatedOutput(items, {
+      pageNumber: queryInput.pageNumber,
+      pageSize: queryInput.pageSize,
+      totalCount,
     });
+
+    return res.status(HTTP_STATUSES.OK_200).json(output);
   } catch (error) {
     console.error('Get posts by blog ID failed:', error);
-    return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
+
+    return res.sendStatus(
+      HTTP_STATUSES.INTERNAL_SERVER_ERROR_500,
+    );
   }
 };

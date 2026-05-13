@@ -1,9 +1,9 @@
 import request from 'supertest';
 import { routerPath } from '../../../src/core/paths/paths';
 import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
-import { PostInputModelDto } from '../../../src/features/posts/dto/posts.input-model.dto';
+import { PostCreateInput } from '../../../src/features/posts/routers/input/post-create.input';
 import { postTestManager} from '../../utils/test-managers';
-import { BlogInputModelDto } from '../../../src/features/blogs/dto/blogs.input-model.dto';
+import { BlogCreateInput } from '../../../src/features/blogs/routers/input/blog-crete.input';
 import { clearDb } from '../../utils/clear-db';
 import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';
@@ -23,13 +23,13 @@ const app = createTestApp();
   });
 
 
-  const blogData: BlogInputModelDto = {
+  const blogData: BlogCreateInput = {
     name: 'Test Blog Name',
     description: 'Test description for Blog',
     websiteUrl: 'https://testblog.com',
   };
 
-  const postData: Omit<PostInputModelDto, 'blogId'> = {
+  const postData: Omit<PostCreateInput, 'blogId'> = {
     title: 'Test Post Title',
     shortDescription: 'Test Post Short Description',
     content: 'Test Post Content',

@@ -1,24 +1,23 @@
-import { Request, Response } from 'express';
-import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { PostViewModelDto } from '../../dto/posts.view-model.dto';
-import { mapPost } from '../mappers/map-to-post-view-model.util';
-import { RequestWithQuery } from '../../../../core/types/request.types';
-import { PostsQueryInput } from '../../types/posts-query-input';
-import { PostsQueryInputModelDto } from '../../dto/posts.query-imput.dto';
-import { postsService } from '../../application/posts.service';
+import { Response } from 'express';
 import { matchedData } from 'express-validator/lib/matched-data';
-import { PaginatedPostsViewModelDto } from '../../dto/posts.paginated-view.model.dto';
+import { HTTP_STATUSES } from '../../../../core/utils/http-status';
+import { RequestWithQuery } from '../../../../core/types/request.types';
+import { postsService } from '../../application/posts.service';
+import { PostsQueryInput } from '../input/posts-query-input';
+import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
+import { mapToPostListPaginatedOutput } from '../mappers/map-post-list-paginated-output.util';
 
 export const getPostsListHandler = async (
-  req: RequestWithQuery<PostsQueryInputModelDto>,
-  res: Response<PaginatedPostsViewModelDto>,
+  req: RequestWithQuery<Partial<PostsQueryInput>>,
+  res: Response<PostListPaginatedOutput>,
 ) => {
   const DEFAULT_PAGE_NUMBER = 1;
   const DEFAULT_PAGE_SIZE = 10;
   const DEFAULT_SORT_BY: PostsQueryInput['sortBy'] = 'createdAt';
   const DEFAULT_SORT_DIRECTION: PostsQueryInput['sortDirection'] = 'desc';
+
   try {
-    const sanitizedQuery = matchedData<PostsQueryInput>(req, {
+    const sanitizedQuery = matchedData<Partial<PostsQueryInput>>(req, {
       locations: ['query'],
       includeOptionals: true,
     });
@@ -27,14 +26,19 @@ export const getPostsListHandler = async (
       pageNumber: sanitizedQuery.pageNumber ?? DEFAULT_PAGE_NUMBER,
       pageSize: sanitizedQuery.pageSize ?? DEFAULT_PAGE_SIZE,
       sortBy: sanitizedQuery.sortBy ?? DEFAULT_SORT_BY,
-      sortDirection: sanitizedQuery.sortDirection ?? DEFAULT_SORT_DIRECTION,
+      sortDirection:
+        sanitizedQuery.sortDirection ?? DEFAULT_SORT_DIRECTION,
     };
-    const posts = await postsService.findMany(queryInput);
 
-    return res.status(HTTP_STATUSES.OK_200).json({
-      ...posts,
-      items: posts.items.map(mapPost),
+    const { items, totalCount } = await postsService.findMany(queryInput);
+
+    const output = mapToPostListPaginatedOutput(items, {
+      pageNumber: queryInput.pageNumber,
+      pageSize: queryInput.pageSize,
+      totalCount,
     });
+
+    return res.status(HTTP_STATUSES.OK_200).json(output);
   } catch (error) {
     console.error('Get posts list failed:', error);
     return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);

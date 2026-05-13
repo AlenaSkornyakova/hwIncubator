@@ -1,9 +1,9 @@
-import { PostInputModelDto } from '../dto/posts.input-model.dto';
+import { PostCreateInput } from '../routers/input/post-create.input';
 import { postsRepository } from '../repositories/posts-db.repository';
 import { WithId } from 'mongodb';
-import { Post } from '../types/post.type';
+import { Post } from '../routers/domain/post.type';
 import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
-import { PostsQueryInput } from '../types/posts-query-input';
+import { PostsQueryInput } from '../routers/input/posts-query-input';
 import { blogsRepository } from '../../blogs/repositories/blogs-db.repository';
 import { BlogNotFoundError } from './errors';
 
@@ -18,7 +18,7 @@ export const postsService = {
     return await postsRepository.findById(id);
   },
 
-  async create(dto: PostInputModelDto): Promise<WithId<Post>> {
+  async create(dto: PostCreateInput): Promise<WithId<Post>> {
     const blog = await blogsRepository.findById(dto.blogId);
     if (!blog) {
     throw new BlogNotFoundError();
@@ -35,7 +35,7 @@ export const postsService = {
 
   },
 
-  async updateById(id: string, dto: PostInputModelDto): Promise<boolean> {
+  async updateById(id: string, dto: PostCreateInput): Promise<boolean> {
     return await postsRepository.update(id, dto);
   },
 

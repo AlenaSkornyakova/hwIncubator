@@ -7,7 +7,7 @@ const expectValidDateString = (value: string) => {
   expect(new Date(value).toString()).not.toBe('Invalid Date');
 };
 
-export const expectBlogViewModel = (
+export const expectBlogOutput = (
   blog: any,
   expected: {
     id?: string;

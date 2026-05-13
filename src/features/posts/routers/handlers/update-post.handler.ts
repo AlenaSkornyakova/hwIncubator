@@ -1,13 +1,13 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { PostViewModelDto } from '../../dto/posts.view-model.dto';
-import { PostInputModelDto } from '../../dto/posts.input-model.dto';
+import { PostOutput } from '../output/post.output';
+import { PostCreateInput } from '../input/post-create.input';
 import { RequestWithBody, RequestWithParams } from '../../../../core/types/request.types';
 import { postsService } from '../../application/posts.service';
 
 export const updatePostHandler = async (
-  req: RequestWithParams<{ id: string }> & RequestWithBody<PostInputModelDto>,
-  res: Response<PostViewModelDto>,
+  req: RequestWithParams<{ id: string }> & RequestWithBody<PostCreateInput>,
+  res: Response<PostOutput>,
 ) => {
   try {
     const id = req.params.id;

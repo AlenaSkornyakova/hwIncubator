@@ -1,11 +1,11 @@
 import request from 'supertest';
 import { HTTP_STATUSES, HttpStatusType } from '../../src/core/utils/http-status';
 import { routerPath } from '../../src/core/paths/paths';
-import { BlogInputModelDto } from '../../src/features/blogs/dto/blogs.input-model.dto';
-import { PostInputModelDto } from '../../src/features/posts/dto/posts.input-model.dto';
+import { BlogCreateInput } from '../../src/features/blogs/routers/input/blog-crete.input';
+import { PostCreateInput } from '../../src/features/posts/routers/input/post-create.input';
 import { generateBasicAuthHeader } from './generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../config/admin-credentials';
-import { expectBlogViewModel, expectPostViewModel } from './matchers';
+import { expectBlogOutput, expectPostViewModel } from './matchers';
 
 
 const ADMIN_AUTH = generateBasicAuthHeader(
@@ -17,7 +17,7 @@ const ADMIN_AUTH = generateBasicAuthHeader(
 export const blogTestManager = {
   async createBlog(
     app: any,
-    data: BlogInputModelDto,
+    data: BlogCreateInput,
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
   ) {
     const response = await request(app)
@@ -31,7 +31,7 @@ export const blogTestManager = {
     if (expectedStatusCode === HTTP_STATUSES.CREATED_201) {
       createdEntity = response.body;
 
-      expectBlogViewModel(createdEntity, data);
+      expectBlogOutput(createdEntity, data);
     }
     return { response, createdEntity };
   },
@@ -40,7 +40,7 @@ export const blogTestManager = {
 export const postTestManager = {
   async createPost(
     app: any,
-    data: PostInputModelDto,
+    data: PostCreateInput,
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
   ) {
     const response = await request(app)
@@ -66,13 +66,13 @@ export const postTestManager = {
 
   async createPostWithBlog(
     app: any,
-    postBase: Omit<PostInputModelDto, 'blogId'>,
-    blogData: BlogInputModelDto,
+    postBase: Omit<PostCreateInput, 'blogId'>,
+    blogData: BlogCreateInput,
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
   ) {
     const { createdEntity: blog } = await blogTestManager.createBlog(app, blogData);
 
-    const postDto: PostInputModelDto = {
+    const postDto: PostCreateInput = {
       ...postBase,
       blogId: blog.id,
     };

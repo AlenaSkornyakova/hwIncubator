@@ -1,5 +1,5 @@
-import type { Blog } from '../features/blogs/types/blog.type';
-import { Post } from '../features/posts/types/post.type';
+import type { Blog } from '../features/blogs/domain/blog.type';
+import { Post } from '../features/posts/routers/domain/post.type';
 
 export type DBType = {
   blogs: Blog[];
