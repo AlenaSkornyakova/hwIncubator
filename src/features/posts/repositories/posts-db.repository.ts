@@ -15,9 +15,7 @@ export const postsRepository = {
       filter.blogId = blogId;
     }
     const skip = (normalizedQuery.pageNumber - 1) * normalizedQuery.pageSize;
-    const sortField = normalizedQuery.sortBy === 'id'
-  ? '_id'
-  : normalizedQuery.sortBy;
+    const sortField = normalizedQuery.sortBy === 'id' ? '_id' : normalizedQuery.sortBy;
 
     const items = await postCollection
       .find(filter)
@@ -27,11 +25,8 @@ export const postsRepository = {
       .toArray();
     const totalCount = await postCollection.countDocuments(filter);
     return {
-      pagesCount: Math.ceil(totalCount / normalizedQuery.pageSize),
-      page: normalizedQuery.pageNumber,
-      pageSize: normalizedQuery.pageSize,
-      totalCount: totalCount,
-      items: items,
+      items,
+      totalCount,
     };
   },
 
