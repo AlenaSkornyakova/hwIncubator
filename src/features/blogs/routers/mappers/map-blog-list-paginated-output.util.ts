@@ -1,12 +1,15 @@
 import { WithId } from 'mongodb';
 import { Blog } from '../../domain/blog.type';
-import { ResourceType } from '../../../../core/types/resource-type';
+import { ResourceType } from '../../../../core/types/resource-type.types';
 import { BlogListPaginatedOutput } from '../output/blog-list-paginated-output';
 import { BlogDataOutput } from '../output/blog-data.output';
 
 export function mapToBlogListPaginatedOutput(
   blogs: WithId<Blog>[],
-  meta: { pageNumber: number; pageSize: number; totalCount: number },
+  meta: { 
+    pageNumber: number; 
+    pageSize: number; 
+    totalCount: number },
 ): BlogListPaginatedOutput {
   return {
     meta: {

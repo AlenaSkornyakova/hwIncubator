@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithParams, RequestWithBody } from '../../../../core/types/request.types';
+import { RequestWithParams, RequestWithBody } from '../../../../core/types/request-types.types';
 import { postsService } from '../../../posts/application/posts.service';
 import { PostByBlogIdCreateInput } from '../input/post-by-blog-id-create.input';
 import { PostCreateInput } from '../../../posts/routers/input/post-create.input';

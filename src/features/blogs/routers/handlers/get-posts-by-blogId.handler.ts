@@ -29,6 +29,10 @@ export const getPostsByBlogIdHandler = async (
     });
 
    const queryInput: PostsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
+// const queryInput =
+//   setDefaultSortAndPaginationIfNotExist<PostsQueryInput['sortBy']>(
+//     sanitizedQuery,
+//   );
 
     const blogId = req.params.id;
 

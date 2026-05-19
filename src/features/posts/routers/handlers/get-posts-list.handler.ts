@@ -19,6 +19,10 @@ export const getPostsListHandler = async (
     });
 
     const queryInput: PostsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
+  //   const queryInput =
+  // setDefaultSortAndPaginationIfNotExist<PostsQueryInput['sortBy']>(
+  //   sanitizedQuery,
+  // );
 
     const { items, totalCount } = await postsService.findMany(queryInput);
 

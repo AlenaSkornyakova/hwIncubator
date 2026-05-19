@@ -1,4 +1,4 @@
-import { ResourceType } from '../../../../core/types/resource-type';
+import { ResourceType } from '../../../../core/types/resource-type.types';
 
 export type BlogDataOutput = {
   type: ResourceType.Blogs;

@@ -41,7 +41,7 @@ export const blogsRepository = {
     return { _id: insertResult.insertedId, ...newBlog };
   },
 
-  async updateById(id: string, dto: BlogUpdateInput): Promise<boolean> {
+  async updateById(id: string, dto:  BlogCreateInput): Promise<boolean> {
     if (!ObjectId.isValid(id)) return false;
 
     const updateResult = await blogCollection.updateOne(

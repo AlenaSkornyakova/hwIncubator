@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import { Post } from '../domain/post.type';
 import { PostOutput } from '../output/post.output';
-import { ResourceType } from '../../../../core/types/resource-type';
+import { ResourceType } from '../../../../core/types/resource-type.types';
 
 export const mapToPostOutput = (
   dbPost: WithId<Post>,

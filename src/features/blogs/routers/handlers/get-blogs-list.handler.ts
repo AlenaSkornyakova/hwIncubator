@@ -20,7 +20,10 @@ export const getBlogsListHandler = async (
     });
 
     const queryInput: BlogsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
-    
+  //   const queryInput =
+  // setDefaultSortAndPaginationIfNotExist<BlogsQueryInput['sortBy']>(
+  //   sanitizedQuery,
+  // );
 
     const { items, totalCount } = await blogsService.findMany(queryInput);
 
