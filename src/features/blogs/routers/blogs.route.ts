@@ -5,24 +5,25 @@ import { getBlogByIdHandler } from './handlers/get-blog-by-id.handler';
 import { getPostsByBlogIdHandler  } from './handlers/get-posts-by-blogId.handler';
 import { updateBlogHandler } from './handlers/update-blog.handler';
 import { deleteBlogHandler } from './handlers/delete-blog.handler';
-import { blogInputValidation } from '../validation/blog-input.validation';
-import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation.middleware';
+import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation-result.middleware';
 import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
 import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
 import { createPostByBlogIdHandler } from './handlers/create-post-by-blogId.handler';
-import { createPostForBlogInputValidation } from '../../posts/validation/post-input.validation';
-import { blogQueryValidation } from '../validation/blog-query.validation';
-import { postQueryValidation } from '../../posts/validation/post-query.validation';
+import { createPostForBlogInputValidation } from '../../posts/routers/post-input-dto-validation.middleware';
+import { paginationAndSortingValidation } from '../../../core/middlewares/query-pagination-sorting.validation-middleware';
+import { blogSortFields } from './input/blog-sort-fields';
+import { blogCreateInputValidation, blogUpdateInputValidation } from '../routers/blog-input-dto-validation.middleware';
+import { postSortFields } from '../../posts/routers/input/posts-sort-fields';
 
    
 
 export const blogsRouter = express.Router();
 
 blogsRouter
-.get('/', blogQueryValidation, inputValidationResultMiddleware, getBlogsListHandler)
-.post('/', superAdminGuardMiddleware, blogInputValidation, inputValidationResultMiddleware,createBlogHandler )
+.get('/', paginationAndSortingValidation(blogSortFields), inputValidationResultMiddleware, getBlogsListHandler)
+.post('/', superAdminGuardMiddleware, blogCreateInputValidation, inputValidationResultMiddleware,createBlogHandler )
 .post('/:id/posts', superAdminGuardMiddleware, paramsIdValidation, createPostForBlogInputValidation, inputValidationResultMiddleware, createPostByBlogIdHandler)
 .get('/:id', paramsIdValidation, inputValidationResultMiddleware, getBlogByIdHandler)
-.get ('/:id/posts',paramsIdValidation,  postQueryValidation, inputValidationResultMiddleware, getPostsByBlogIdHandler)
-.put('/:id', superAdminGuardMiddleware, paramsIdValidation, blogInputValidation, inputValidationResultMiddleware, updateBlogHandler)
+.get ('/:id/posts',paramsIdValidation,  paginationAndSortingValidation(postSortFields), inputValidationResultMiddleware, getPostsByBlogIdHandler)
+.put('/:id', superAdminGuardMiddleware, paramsIdValidation, blogUpdateInputValidation, inputValidationResultMiddleware, updateBlogHandler)
 .delete('/:id', superAdminGuardMiddleware, paramsIdValidation, inputValidationResultMiddleware, deleteBlogHandler)

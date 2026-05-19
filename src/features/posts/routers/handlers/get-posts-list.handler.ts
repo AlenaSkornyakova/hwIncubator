@@ -6,29 +6,19 @@ import { postsService } from '../../application/posts.service';
 import { PostsQueryInput } from '../input/posts-query-input';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
 import { mapToPostListPaginatedOutput } from '../mappers/map-post-list-paginated-output.util';
+import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
 
 export const getPostsListHandler = async (
   req: RequestWithQuery<Partial<PostsQueryInput>>,
   res: Response<PostListPaginatedOutput>,
 ) => {
-  const DEFAULT_PAGE_NUMBER = 1;
-  const DEFAULT_PAGE_SIZE = 10;
-  const DEFAULT_SORT_BY: PostsQueryInput['sortBy'] = 'createdAt';
-  const DEFAULT_SORT_DIRECTION: PostsQueryInput['sortDirection'] = 'desc';
-
   try {
     const sanitizedQuery = matchedData<Partial<PostsQueryInput>>(req, {
       locations: ['query'],
       includeOptionals: true,
     });
 
-    const queryInput: PostsQueryInput = {
-      pageNumber: sanitizedQuery.pageNumber ?? DEFAULT_PAGE_NUMBER,
-      pageSize: sanitizedQuery.pageSize ?? DEFAULT_PAGE_SIZE,
-      sortBy: sanitizedQuery.sortBy ?? DEFAULT_SORT_BY,
-      sortDirection:
-        sanitizedQuery.sortDirection ?? DEFAULT_SORT_DIRECTION,
-    };
+    const queryInput: PostsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
     const { items, totalCount } = await postsService.findMany(queryInput);
 
