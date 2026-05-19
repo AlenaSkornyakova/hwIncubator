@@ -1,5 +1,5 @@
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithParams } from '../../../../core/types/request.types';
+import { RequestWithParams } from '../../../../core/types/request-types.types';
 import { Response } from 'express';
 import { PostOutput } from '../output/post.output';
 import { mapToPostOutput } from '../mappers/map-post-output.util';

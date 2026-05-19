@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { PostOutput } from '../output/post.output';
 import { PostCreateInput } from '../input/post-create.input';
-import { RequestWithBody } from '../../../../core/types/request.types';
+import { RequestWithBody } from '../../../../core/types/request-types.types';
 import { mapToPostOutput } from '../mappers/map-post-output.util';
 import { postsService } from '../../application/posts.service';
 import { BlogNotFoundError } from '../../application/errors';

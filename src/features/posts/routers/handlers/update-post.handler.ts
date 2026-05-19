@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { PostOutput } from '../output/post.output';
 import { PostCreateInput } from '../input/post-create.input';
-import { RequestWithBody, RequestWithParams } from '../../../../core/types/request.types';
+import { RequestWithBody, RequestWithParams } from '../../../../core/types/request-types.types';
 import { postsService } from '../../application/posts.service';
 
 export const updatePostHandler = async (

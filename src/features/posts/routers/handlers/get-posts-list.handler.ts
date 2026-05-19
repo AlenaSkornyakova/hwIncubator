@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { matchedData } from 'express-validator/lib/matched-data';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithQuery } from '../../../../core/types/request.types';
+import { RequestWithQuery } from '../../../../core/types/request-types.types';
 import { postsService } from '../../application/posts.service';
 import { PostsQueryInput } from '../input/posts-query-input';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';

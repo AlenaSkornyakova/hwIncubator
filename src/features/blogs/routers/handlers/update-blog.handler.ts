@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithBody, RequestWithParams } from '../../../../core/types/request.types';
+import { RequestWithBody, RequestWithParams } from '../../../../core/types/request-types.types';
 import { BlogCreateInput } from '../input/blog-crete.input';
 import { blogsService } from '../../ application/blogs.service';
 

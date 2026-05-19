@@ -5,7 +5,7 @@ import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import {
   RequestWithParams,
   RequestWithQuery,
-} from '../../../../core/types/request.types';
+} from '../../../../core/types/request-types.types';
 
 import { blogsService } from '../../ application/blogs.service';
 import { postsService } from '../../../posts/application/posts.service';

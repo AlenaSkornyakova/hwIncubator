@@ -4,6 +4,7 @@ import { WithId, ObjectId, Filter } from 'mongodb';
 import { postCollection } from '../../../db/mongo.db';
 import { PostsQueryInput } from '../routers/input/posts-query-input';
 import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
+import { SortDirection } from '../../../core/types/sort-direction.types';
 
 export const postsRepository = {
   async findMany(
@@ -19,7 +20,7 @@ export const postsRepository = {
 
     const items = await postCollection
       .find(filter)
-      .sort({ [sortField]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
+      .sort({ [sortField]: normalizedQuery.sortDirection === SortDirection.Asc ? 1 : -1 })
       .skip(skip)
       .limit(normalizedQuery.pageSize)
       .toArray();

@@ -1,9 +1,10 @@
-import { BlogCreateInput } from '../routers/input/blog-crete.input';
+import { BlogCreateInput,} from '../routers/input/blog-crete.input';
 import { blogCollection } from '../../../db/mongo.db';
 import { Filter, ObjectId, WithId } from 'mongodb';
 import { Blog } from '../domain/blog.type';
 import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
 import {BlogsQueryInput} from '../routers/input/blogs-query-input';
+import { SortDirection } from '../../../core/types/sort-direction.types';
 
 export const blogsRepository = {
 
@@ -19,7 +20,7 @@ export const blogsRepository = {
   : normalizedQuery.sortBy;
   const items = await blogCollection
     .find(filter)
-    .sort({ [sortField]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
+    .sort({ [sortField]: normalizedQuery.sortDirection === SortDirection.Asc ? 1 : -1 })
     .skip(skip)
     .limit(normalizedQuery.pageSize)
     .toArray();
@@ -40,7 +41,7 @@ export const blogsRepository = {
     return { _id: insertResult.insertedId, ...newBlog };
   },
 
-  async updateById(id: string, dto: BlogCreateInput): Promise<boolean> {
+  async updateById(id: string, dto: BlogUpdateInput): Promise<boolean> {
     if (!ObjectId.isValid(id)) return false;
 
     const updateResult = await blogCollection.updateOne(

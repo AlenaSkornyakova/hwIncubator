@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithParams } from '../../../../core/types/request.types';
+import { RequestWithParams } from '../../../../core/types/request-types.types';
 import { blogsService } from '../../ application/blogs.service';
 
 export const deleteBlogHandler = async(

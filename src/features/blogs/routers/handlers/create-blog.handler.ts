@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithBody} from '../../../../core/types/request.types';
+import { RequestWithBody} from '../../../../core/types/request-types.types';
 import { mapToBlogOutput } from '../mappers/map-blog-output.util';
 import { BlogCreateInput } from '../input/blog-crete.input';
  import { BlogOutput } from '../output/blog.output'; 

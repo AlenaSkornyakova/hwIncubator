@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { matchedData } from 'express-validator/lib/matched-data';
 
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithQuery } from '../../../../core/types/request.types';
+import { RequestWithQuery } from '../../../../core/types/request-types.types';
 
 import { blogsService } from '../../ application/blogs.service';
 import { BlogsQueryInput } from '../input/blogs-query-input';
