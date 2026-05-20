@@ -7,6 +7,7 @@ import { BlogsQueryInput } from '../input/blogs-query-input';
 import { BlogListPaginatedOutput } from '../output/blog-list-paginated-output';
 import { mapToBlogListPaginatedOutput } from '../mappers/map-blog-list-paginated-output.util';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
+import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const getBlogsListHandler = async (
   req: RequestWithQuery<Partial<BlogsQueryInput>>,
@@ -32,6 +33,6 @@ export const getBlogsListHandler = async (
     return res.status(HTTP_STATUSES.OK_200).json(output);
   } catch (error) {
     console.error('Get blogs list failed:', error);
-    return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
+    return errorsHandler(error, res);
   }
 };

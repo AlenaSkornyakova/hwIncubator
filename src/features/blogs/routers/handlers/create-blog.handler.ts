@@ -7,6 +7,7 @@ import { BlogOutput } from '../output/blog.output';
 import { blogsService } from '../../ application/blogs.service';
 import { matchedData } from 'express-validator/lib/matched-data';
 import { BlogCreateDto } from '../../dto/blog-create.dto';
+import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const createBlogHandler = async (
   req: RequestWithBody<BlogCreateInput>,
@@ -27,6 +28,6 @@ export const createBlogHandler = async (
     return res.status(HTTP_STATUSES.CREATED_201).json(mapToBlogOutput(createdBlog));
   } catch (error) {
     console.error('Create blog failed:', error);
-    return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
+    return errorsHandler(error, res);
   }
 };

@@ -6,6 +6,7 @@ import { PostsQueryInput } from '../routers/input/posts-query-input';
 import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
 import { SortDirection } from '../../../core/types/sort-direction.types';
 import { PostCreateDto } from '../dto/post-create.dto';
+import { RepositoryNotFoundError } from '../../../core/errors/repository-not-found.error';
 
 export const postsRepository = {
   async findMany(
@@ -36,17 +37,25 @@ export const postsRepository = {
     if (!ObjectId.isValid(id)) return null;
     return postCollection.findOne({ _id: new ObjectId(id) });
   },
+
   async findByBlogId(blogId: string): Promise<WithId<Post>[]> {
     if (!ObjectId.isValid(blogId)) return [];
     return postCollection.find({ blogId: blogId }).toArray();
+  },
+
+  async findByIdOrFail(id: string): Promise<WithId<Post>> {
+    const result = await this.findById(id);
+    if (!result) {
+      throw new RepositoryNotFoundError('Post not exist');
+    }
+    return result;
   },
   async create(newPost: Post): Promise<WithId<Post>> {
     const insertResult = await postCollection.insertOne(newPost);
     return { _id: insertResult.insertedId, ...newPost };
   },
 
-  async update(id: string, dto: PostCreateDto): Promise<boolean> {
-    if (!ObjectId.isValid(id)) return false;
+  async update(id: string, dto: PostCreateDto): Promise<void> {
     const updateResult = await postCollection.updateOne(
       { _id: new ObjectId(id) },
       {
@@ -58,12 +67,17 @@ export const postsRepository = {
         },
       },
     );
-    return updateResult.matchedCount === 1;
+    if(updateResult.matchedCount < 1) {
+      throw new RepositoryNotFoundError('Post not exist');
+    }
+    return;
   },
 
-  async delete(id: string): Promise<boolean> {
-    if (!ObjectId.isValid(id)) return false;
+  async delete(id: string): Promise<void> {
     const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(id) });
-    return deleteResult.deletedCount === 1;
+    if (deleteResult.deletedCount < 1) {
+      throw new RepositoryNotFoundError('Post not exist');
+    }
+    return;
   },
 };

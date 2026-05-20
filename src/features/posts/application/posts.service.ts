@@ -5,8 +5,9 @@ import { Post } from '../routers/domain/post.type';
 import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
 import { PostsQueryInput } from '../routers/input/posts-query-input';
 import { blogsRepository } from '../../blogs/repositories/blogs-db.repository';
-import { BlogNotFoundError } from './errors';
 import { PostCreateDto } from '../dto/post-create.dto';
+import { DomainError } from '../../../core/errors/domain.error';
+import { PostCreateForBlogDto } from '../dto/post-create-for-blog.dto';
 
 
 
@@ -19,10 +20,19 @@ export const postsService = {
     return await postsRepository.findById(id);
   },
 
+  async findByIdOrFail(id: string): Promise<WithId<Post>> {
+    return await postsRepository.findByIdOrFail(id);
+  },
+
   async create(dto: PostCreateDto): Promise<WithId<Post>> {
     const blog = await blogsRepository.findById(dto.blogId);
     if (!blog) {
-    throw new BlogNotFoundError();
+    throw new DomainError(
+      'blogId is invalid',
+      'BLOG_NOT_FOUND',
+      'blogId',
+      400,
+    );
   }
      const newPost: Post = { 
       title: dto.title,
@@ -35,12 +45,29 @@ export const postsService = {
     return await postsRepository.create(newPost);
 
   },
+  async createForBlog(
+  blogId: string,
+  dto: PostCreateForBlogDto,
+): Promise<WithId<Post>> {
+  const blog = await blogsRepository.findByIdOrFail(blogId);
 
-  async updateById(id: string, dto: PostCreateDto): Promise<boolean> {
+  const newPost: Post = {
+    title: dto.title,
+    shortDescription: dto.shortDescription,
+    content: dto.content,
+    blogId,
+    blogName: blog.name,
+    createdAt: new Date(),
+  };
+
+  return postsRepository.create(newPost);
+},
+
+  async updateById(id: string, dto: PostCreateDto): Promise<void> {
     return await postsRepository.update(id, dto);
   },
 
-  async deleteById(id: string): Promise<boolean> {
+  async deleteById(id: string): Promise<void> {
     return await postsRepository.delete(id);
   },
 };

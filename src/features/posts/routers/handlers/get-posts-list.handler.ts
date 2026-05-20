@@ -7,6 +7,7 @@ import { PostsQueryInput } from '../input/posts-query-input';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
 import { mapToPostListPaginatedOutput } from '../mappers/map-post-list-paginated-output.util';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
+import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const getPostsListHandler = async (
   req: RequestWithQuery<Partial<PostsQueryInput>>,
@@ -32,6 +33,6 @@ export const getPostsListHandler = async (
     return res.status(HTTP_STATUSES.OK_200).json(output);
   } catch (error) {
     console.error('Get posts list failed:', error);
-    return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
+    return errorsHandler(error, res);
   }
 };
