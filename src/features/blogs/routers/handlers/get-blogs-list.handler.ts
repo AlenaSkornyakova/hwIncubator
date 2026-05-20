@@ -6,24 +6,20 @@ import { blogsService } from '../../ application/blogs.service';
 import { BlogsQueryInput } from '../input/blogs-query-input';
 import { BlogListPaginatedOutput } from '../output/blog-list-paginated-output';
 import { mapToBlogListPaginatedOutput } from '../mappers/map-blog-list-paginated-output.util';
-import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination'; 
+import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
 
 export const getBlogsListHandler = async (
   req: RequestWithQuery<Partial<BlogsQueryInput>>,
   res: Response<BlogListPaginatedOutput>,
 ) => {
-
   try {
     const sanitizedQuery = matchedData<Partial<BlogsQueryInput>>(req, {
       locations: ['query'],
       includeOptionals: true,
     });
 
-    const queryInput: BlogsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
-  //   const queryInput =
-  // setDefaultSortAndPaginationIfNotExist<BlogsQueryInput['sortBy']>(
-  //   sanitizedQuery,
-  // );
+    const queryInput =
+      setDefaultSortAndPaginationIfNotExist<BlogsQueryInput['sortBy']>(sanitizedQuery);
 
     const { items, totalCount } = await blogsService.findMany(queryInput);
 

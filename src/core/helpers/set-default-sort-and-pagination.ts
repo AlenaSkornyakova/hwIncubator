@@ -1,7 +1,7 @@
 import { PaginationAndSortingQuery } from '../types/pagination-and-sorting.types';
 import { paginationAndSortingDefault } from '../middlewares/query-pagination-sorting.validation-middleware'; 
 
-export function setDefaultSortAndPaginationIfNotExist<P = string>(
+export function setDefaultSortAndPaginationIfNotExist<P extends string>(
   query: Partial<PaginationAndSortingQuery<P>>,
 ): PaginationAndSortingQuery<P> {
   return {

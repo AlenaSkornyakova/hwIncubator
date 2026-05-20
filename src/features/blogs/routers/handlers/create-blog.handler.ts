@@ -23,7 +23,6 @@ export const createBlogHandler = async (
       description: attributes.description,
       websiteUrl: attributes.websiteUrl,
     };
-    console.log('Creating blog with DTO:', dto);  
     const createdBlog = await blogsService.create(dto);
     return res.status(HTTP_STATUSES.CREATED_201).json(mapToBlogOutput(createdBlog));
   } catch (error) {

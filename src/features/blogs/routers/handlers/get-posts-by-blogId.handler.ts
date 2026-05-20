@@ -2,10 +2,7 @@ import { Response } from 'express';
 import { matchedData } from 'express-validator/lib/matched-data';
 
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import {
-  RequestWithParams,
-  RequestWithQuery,
-} from '../../../../core/types/request-types.types';
+import { RequestWithParams, RequestWithQuery } from '../../../../core/types/request-types.types';
 
 import { blogsService } from '../../ application/blogs.service';
 import { postsService } from '../../../posts/application/posts.service';
@@ -18,8 +15,7 @@ import { mapToPostListPaginatedOutput } from '../../../posts/routers/mappers/map
 import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
 
 export const getPostsByBlogIdHandler = async (
-  req: RequestWithParams<{ id: string }> &
-    RequestWithQuery<PostsQueryInput>,
+  req: RequestWithParams<{ id: string }> & RequestWithQuery<PostsQueryInput>,
   res: Response<PostListPaginatedOutput>,
 ) => {
   try {
@@ -28,11 +24,8 @@ export const getPostsByBlogIdHandler = async (
       includeOptionals: true,
     });
 
-   const queryInput: PostsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
-// const queryInput =
-//   setDefaultSortAndPaginationIfNotExist<PostsQueryInput['sortBy']>(
-//     sanitizedQuery,
-//   );
+    const queryInput =
+      setDefaultSortAndPaginationIfNotExist<PostsQueryInput['sortBy']>(sanitizedQuery);
 
     const blogId = req.params.id;
 
@@ -43,10 +36,7 @@ export const getPostsByBlogIdHandler = async (
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }
 
-    const { items, totalCount } = await postsService.findMany(
-      queryInput,
-      blogId,
-    );
+    const { items, totalCount } = await postsService.findMany(queryInput, blogId);
 
     const output = mapToPostListPaginatedOutput(items, {
       pageNumber: queryInput.pageNumber,
@@ -58,8 +48,6 @@ export const getPostsByBlogIdHandler = async (
   } catch (error) {
     console.error('Get posts by blog ID failed:', error);
 
-    return res.sendStatus(
-      HTTP_STATUSES.INTERNAL_SERVER_ERROR_500,
-    );
+    return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
   }
 };
