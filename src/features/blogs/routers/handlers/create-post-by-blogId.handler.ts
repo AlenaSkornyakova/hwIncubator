@@ -2,27 +2,27 @@ import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithParams, RequestWithBody } from '../../../../core/types/request-types.types';
 import { postsService } from '../../../posts/application/posts.service';
-import { PostByBlogIdCreateInput } from '../input/post-by-blog-id-create.input';
+import { PostByBlogIdCreateInput } from '../../../posts/routers/input/post-by-blog-id-create.input';
 import { PostCreateInput } from '../../../posts/routers/input/post-create.input';
 import { mapToPostOutput } from '../../../posts/routers/mappers/map-post-output.util';
 import { matchedData } from 'express-validator/lib/matched-data';
 import { BlogNotFoundError } from '../../../posts/application/errors';
-
-
+import { PostCreateDto } from '../../../posts/dto/post-create.dto';
 
 export const createPostByBlogIdHandler = async (
-    req: RequestWithParams<{ id: string }> & RequestWithBody<PostByBlogIdCreateInput>, 
-    res: Response,
- ) => {
+  req: RequestWithParams<{ id: string }> & RequestWithBody<PostByBlogIdCreateInput>,
+  res: Response,
+) => {
   try {
-     const sanitizedQuery = matchedData<PostByBlogIdCreateInput>(req, {
-          locations: ['body', 'params'],
-          includeOptionals: true,
-        });
-      const dto: PostCreateInput = {
-      title: sanitizedQuery.title,
-      shortDescription: sanitizedQuery.shortDescription,
-      content: sanitizedQuery.content,
+    const sanitizedInput = matchedData<PostByBlogIdCreateInput>(req, {
+      locations: ['body', 'params'],
+      includeOptionals: true,
+    });
+    const attributes = sanitizedInput.data.attributes;
+    const dto: PostCreateDto = {
+      title: attributes.title,
+      shortDescription: attributes.shortDescription,
+      content: attributes.content,
       blogId: req.params.id,
     };
     const createdPost = await postsService.create(dto);

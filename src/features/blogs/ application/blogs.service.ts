@@ -4,6 +4,7 @@ import { WithId } from 'mongodb';
 import { Blog } from '../domain/blog.type';
 import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
 import { BlogsQueryInput } from '../routers/input/blogs-query-input';
+import { BlogCreateDto } from '../dto/blog-create.dto';
 
 
 
@@ -16,7 +17,7 @@ export const blogsService = {
     return await blogsRepository.findById(id);
   },
 
-  async create(dto: BlogCreateInput): Promise<WithId<Blog>> {
+  async create(dto: BlogCreateDto): Promise<WithId<Blog>> {
      const newBlog: Blog = {
       name: dto.name,
       description: dto.description,
@@ -27,7 +28,7 @@ export const blogsService = {
     return await blogsRepository.create(newBlog);
   },
 
-  async updateById(id: string, dto: BlogCreateInput): Promise<boolean> {
+  async updateById(id: string, dto: BlogCreateDto): Promise<boolean> {
     return await blogsRepository.updateById(id, dto);
   },
 

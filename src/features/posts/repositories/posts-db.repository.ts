@@ -5,6 +5,7 @@ import { postCollection } from '../../../db/mongo.db';
 import { PostsQueryInput } from '../routers/input/posts-query-input';
 import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
 import { SortDirection } from '../../../core/types/sort-direction.types';
+import { PostCreateDto } from '../dto/post-create.dto';
 
 export const postsRepository = {
   async findMany(
@@ -44,7 +45,7 @@ export const postsRepository = {
     return { _id: insertResult.insertedId, ...newPost };
   },
 
-  async update(id: string, dto: PostCreateInput): Promise<boolean> {
+  async update(id: string, dto: PostCreateDto): Promise<boolean> {
     if (!ObjectId.isValid(id)) return false;
     const updateResult = await postCollection.updateOne(
       { _id: new ObjectId(id) },

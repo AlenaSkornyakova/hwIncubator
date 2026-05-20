@@ -35,48 +35,32 @@ export const postBaseValidation = [
     .withMessage('content length must be min: 5, max: 1000'),
 ];
 
+const blogIdValidation = body('data.attributes.blogId')
+  .isString()
+  .withMessage('blogId must be a string')
+  .trim()
+  .notEmpty()
+  .withMessage('blogId is required')
+  .bail()
+  .custom(async (blogId: string) => {
+    const blog = await blogsRepository.findById(blogId);
+
+    if (!blog) {
+      throw new Error('blogId is invalid');
+    }
+
+    return true;
+  });
+
 export const postCreateInputValidation = [
   ...postBaseValidation,
-
-  body('data.attributes.blogId')
-    .isString()
-    .withMessage('blogId must be a string')
-    .trim()
-    .notEmpty()
-    .withMessage('blogId is required')
-    .bail()
-    .custom(async (blogId: string) => {
-      const blog = await blogsRepository.findById(blogId);
-
-      if (!blog) {
-        throw new Error('blogId is invalid');
-      }
-
-      return true;
-    }),
+  blogIdValidation,
 ];
+
 export const postUpdateInputValidation = [
-  resourceTypeValidation(ResourceType.Posts),
   dataIdMatchValidation,
-
   ...postBaseValidation,
-
-  body('data.attributes.blogId')
-    .isString()
-    .withMessage('blogId must be a string')
-    .trim()
-    .notEmpty()
-    .withMessage('blogId is required')
-    .bail()
-    .custom(async (blogId: string) => {
-      const blog = await blogsRepository.findById(blogId);
-
-      if (!blog) {
-        throw new Error('blogId is invalid');
-      }
-
-      return true;
-    }),
+  blogIdValidation,
 ];
 
 export const createPostForBlogInputValidation = [

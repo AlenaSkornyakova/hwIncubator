@@ -6,6 +6,7 @@ import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto'
 import { PostsQueryInput } from '../routers/input/posts-query-input';
 import { blogsRepository } from '../../blogs/repositories/blogs-db.repository';
 import { BlogNotFoundError } from './errors';
+import { PostCreateDto } from '../dto/post-create.dto';
 
 
 
@@ -18,7 +19,7 @@ export const postsService = {
     return await postsRepository.findById(id);
   },
 
-  async create(dto: PostCreateInput): Promise<WithId<Post>> {
+  async create(dto: PostCreateDto): Promise<WithId<Post>> {
     const blog = await blogsRepository.findById(dto.blogId);
     if (!blog) {
     throw new BlogNotFoundError();
@@ -35,7 +36,7 @@ export const postsService = {
 
   },
 
-  async updateById(id: string, dto: PostCreateInput): Promise<boolean> {
+  async updateById(id: string, dto: PostCreateDto): Promise<boolean> {
     return await postsRepository.update(id, dto);
   },
 

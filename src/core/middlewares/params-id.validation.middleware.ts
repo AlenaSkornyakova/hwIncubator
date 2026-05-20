@@ -9,6 +9,7 @@ export const paramsIdValidation = param('id')
   .isMongoId()
   .withMessage('Incorrect format of ObjectId');
  
+//needed for PUT /blogs/:id and PUT /posts/:id to ensure that the ID in the URL and in the request body match
   export const dataIdMatchValidation = body('data.id')
   .exists()
   .withMessage('ID in body is required')
@@ -18,4 +19,5 @@ export const paramsIdValidation = param('id')
     }
     return true;
   });
+
  

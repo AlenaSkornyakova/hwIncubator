@@ -1,5 +1,4 @@
 import { body } from 'express-validator';
-
 import { ResourceType } from '../../../core/types/resource-type.types';
 import { resourceTypeValidation } from '../../../core/middlewares/resource-type.validation-middleware';
 import { dataIdMatchValidation } from '../../../core/middlewares/params-id.validation.middleware';

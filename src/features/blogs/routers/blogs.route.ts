@@ -1,5 +1,6 @@
 import express from 'express';
-import {  getBlogsListHandler } from './handlers/get-blogs-list.handler';
+
+import { getBlogsListHandler } from './handlers/get-blogs-list.handler';
 import { createBlogHandler } from './handlers/create-blog.handler';
 import { getBlogByIdHandler } from './handlers/get-blog-by-id.handler';
 import { getPostsByBlogIdHandler  } from './handlers/get-posts-by-blogId.handler';
@@ -14,8 +15,6 @@ import { paginationAndSortingValidation } from '../../../core/middlewares/query-
 import { blogSortFields } from './input/blog-sort-fields';
 import { blogCreateInputValidation, blogUpdateInputValidation } from '../routers/blog-input-dto-validation.middleware';
 import { postSortFields } from '../../posts/routers/input/posts-sort-fields';
-
-   
 
 export const blogsRouter = express.Router();
 
