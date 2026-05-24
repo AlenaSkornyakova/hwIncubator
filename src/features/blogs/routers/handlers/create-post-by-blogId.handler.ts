@@ -8,10 +8,11 @@ import { matchedData } from 'express-validator/lib/matched-data';
 import { PostCreateDto } from '../../../posts/dto/post-create.dto';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 import { PostCreateForBlogDto } from '../../../posts/dto/post-create-for-blog.dto';
+import { PostOutput } from '../../../posts/routers/output/post.output';
 
 export const createPostByBlogIdHandler = async (
   req: RequestWithParams<{ id: string }> & RequestWithBody<PostByBlogIdCreateInput>,
-  res: Response,
+  res: Response <PostOutput>,
 ) => {
   try {
     const sanitizedInput = matchedData<PostByBlogIdCreateInput>(req, {

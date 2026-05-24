@@ -5,14 +5,10 @@ import { BlogCreateInput } from '../../src/features/blogs/routers/input/blog-cre
 import { PostCreateInput } from '../../src/features/posts/routers/input/post-create.input';
 import { generateBasicAuthHeader } from './generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../config/admin-credentials';
-import { expectBlogOutput, expectPostViewModel } from './matchers';
+import { expectBlogOutput, expectPostOutput } from './matchers';
+import { ResourceType } from '../../src/core/types/resource-type.types';
 
-
-const ADMIN_AUTH = generateBasicAuthHeader(
-  TEST_ADMIN_USERNAME,
-  TEST_ADMIN_PASSWORD,
-);
-
+const ADMIN_AUTH = generateBasicAuthHeader(TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD);
 
 export const blogTestManager = {
   async createBlog(
@@ -31,7 +27,7 @@ export const blogTestManager = {
     if (expectedStatusCode === HTTP_STATUSES.CREATED_201) {
       createdEntity = response.body;
 
-      expectBlogOutput(createdEntity, data);
+      expectBlogOutput(createdEntity.data, data.data.attributes);
     }
     return { response, createdEntity };
   },
@@ -54,40 +50,43 @@ export const postTestManager = {
     if (expectedStatusCode === HTTP_STATUSES.CREATED_201) {
       createdEntity = response.body;
 
-      expectPostViewModel(createdEntity, {
-        title: data.title,
-        shortDescription: data.shortDescription,
-        content: data.content,
-        blogId: data.blogId,
-      });
+      expectPostOutput(createdEntity.data, data.data.attributes);
     }
     return { response, createdEntity };
   },
 
   async createPostWithBlog(
     app: any,
-    postBase: Omit<PostCreateInput, 'blogId'>,
+    postAttributes: Omit<PostCreateInput['data']['attributes'], 'blogId'>,
     blogData: BlogCreateInput,
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
   ) {
     const { createdEntity: blog } = await blogTestManager.createBlog(app, blogData);
 
     const postDto: PostCreateInput = {
-      ...postBase,
-      blogId: blog.id,
+      data: {
+        type: ResourceType.Posts,
+        attributes: {
+          ...postAttributes,
+          blogId: blog.data.id,
+        },
+      },
     };
 
-    const { response, createdEntity: post } = await this.createPost(app, postDto, expectedStatusCode);
+    const { response, createdEntity: post } = await this.createPost(
+      app,
+      postDto,
+      expectedStatusCode,
+    );
 
     if (expectedStatusCode === HTTP_STATUSES.CREATED_201) {
-      expectPostViewModel(post, {
-        title: postDto.title,
-        shortDescription: postDto.shortDescription,
-        content: postDto.content,
-        blogId: postDto.blogId,
-        blogName: blogData.name, 
+      expectPostOutput(post.data, {
+        ...postDto.data.attributes,
+        blogName: blogData.data.attributes.name,
       });
     }
+
     return { createdEntity: post, response };
   },
 };
+
