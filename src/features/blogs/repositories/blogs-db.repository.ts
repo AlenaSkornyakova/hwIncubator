@@ -1,9 +1,12 @@
-import { BlogCreateInput } from '../routers/input/blog-crete.input';
+import { BlogCreateInput,} from '../routers/input/blog-crete.input';
 import { blogCollection } from '../../../db/mongo.db';
 import { Filter, ObjectId, WithId } from 'mongodb';
 import { Blog } from '../domain/blog.type';
 import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
 import {BlogsQueryInput} from '../routers/input/blogs-query-input';
+import { SortDirection } from '../../../core/types/sort-direction.types';
+import { BlogCreateDto } from '../dto/blog-create.dto';
+import { RepositoryNotFoundError } from '../../../core/errors/repository-not-found.error';
 
 export const blogsRepository = {
 
@@ -19,7 +22,7 @@ export const blogsRepository = {
   : normalizedQuery.sortBy;
   const items = await blogCollection
     .find(filter)
-    .sort({ [sortField]: normalizedQuery.sortDirection === 'asc' ? 1 : -1 })
+    .sort({ [sortField]: normalizedQuery.sortDirection === SortDirection.Asc ? 1 : -1 })
     .skip(skip)
     .limit(normalizedQuery.pageSize)
     .toArray();
@@ -34,15 +37,21 @@ export const blogsRepository = {
     if (!ObjectId.isValid(id)) return null;
     return blogCollection.findOne({ _id: new ObjectId(id) });
   },
+  
+  async findByIdOrFail(id: string): Promise<WithId<Blog>> {
+    const result = await blogCollection.findOne({ _id: new ObjectId(id) });
+    if (!result) {
+      throw new RepositoryNotFoundError('Blog not exist');
+    }
+    return result;
+  },
 
   async create(newBlog: Blog): Promise<WithId<Blog>> {
     const insertResult = await blogCollection.insertOne(newBlog);
     return { _id: insertResult.insertedId, ...newBlog };
   },
 
-  async updateById(id: string, dto: BlogCreateInput): Promise<boolean> {
-    if (!ObjectId.isValid(id)) return false;
-
+  async updateById(id: string, dto:  BlogCreateDto): Promise<void> {
     const updateResult = await blogCollection.updateOne(
       { _id: new ObjectId(id) },
       {
@@ -53,12 +62,17 @@ export const blogsRepository = {
         },
       },
     );
-    return updateResult.matchedCount === 1;
+    if(updateResult.matchedCount < 1) {
+      throw new RepositoryNotFoundError('Blog not exist');
+    }
+    return;
   },
 
-  async deleteById(id: string): Promise<boolean> {
-    if (!ObjectId.isValid(id)) return false;
+  async deleteById(id: string): Promise<void> {
     const deleteResult = await blogCollection.deleteOne({ _id: new ObjectId(id) });
-    return deleteResult.deletedCount === 1;
+    if (deleteResult.deletedCount < 1) {
+      throw new RepositoryNotFoundError('Blog not exist');
+    }
+    return;
   },
 };

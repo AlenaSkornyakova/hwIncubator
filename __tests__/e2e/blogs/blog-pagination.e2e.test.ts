@@ -4,6 +4,7 @@ import { routerPath } from '../../../src/core/paths/paths';
 import { clearDb } from '../../utils/clear-db';
 import { blogTestManager } from '../../utils/test-managers';  
 import { createTestApp } from '../../utils/createTestApp';
+import { ResourceType } from '../../../src/core/types/resource-type.types';
 
 describe('Blog API pagination', () => {
     const app = createTestApp();
@@ -13,9 +14,14 @@ describe('Blog API pagination', () => {
 
   const createBlog = async (name: string) => {
     const created = await blogTestManager.createBlog(app, {
-      name,
-      description: `Description for ${name}`,
-      websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '-')}.com`,
+       data: {
+            type: ResourceType.Blogs,
+            attributes: {
+              name,
+              description: `Description for ${name}`,
+              websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '-')}.com`,
+            },
+          },
     });
 
     return created.createdEntity ?? created;
@@ -30,11 +36,11 @@ describe('Blog API pagination', () => {
       .get(routerPath.blogs)
       .expect(HTTP_STATUSES.OK_200);
 
-    expect(res.body.page).toBe(1);
-    expect(res.body.pageSize).toBe(10);
-    expect(res.body.totalCount).toBe(3);
-    expect(res.body.pagesCount).toBe(1);
-    expect(res.body.items).toHaveLength(3);
+    expect(res.body.meta.page).toBe(1);
+    expect(res.body.meta.pageSize).toBe(10);
+    expect(res.body.meta.totalCount).toBe(3);
+    expect(res.body.meta.pagesCount).toBe(1);
+    expect(res.body.data).toHaveLength(3);
   });
 
   it('GET /blogs should apply pageSize', async () => {
@@ -46,11 +52,11 @@ describe('Blog API pagination', () => {
       .get(`${routerPath.blogs}?pageSize=2`)
       .expect(HTTP_STATUSES.OK_200);
 
-    expect(res.body.page).toBe(1);
-    expect(res.body.pageSize).toBe(2);
-    expect(res.body.totalCount).toBe(3);
-    expect(res.body.pagesCount).toBe(2);
-    expect(res.body.items).toHaveLength(2);
+    expect(res.body.meta.page).toBe(1);
+    expect(res.body.meta.pageSize).toBe(2);
+    expect(res.body.meta.totalCount).toBe(3);
+    expect(res.body.meta.pagesCount).toBe(2);
+    expect(res.body.data).toHaveLength(2);
   });
 
   it('GET /blogs should return second page correctly', async () => {
@@ -66,18 +72,18 @@ describe('Blog API pagination', () => {
       .get(`${routerPath.blogs}?pageNumber=2&pageSize=2`)
       .expect(HTTP_STATUSES.OK_200);
 
-    expect(firstPage.body.page).toBe(1);
-    expect(firstPage.body.pageSize).toBe(2);
-    expect(firstPage.body.items).toHaveLength(2);
+    expect(firstPage.body.meta.page).toBe(1);
+    expect(firstPage.body.meta.pageSize).toBe(2);
+    expect(firstPage.body.data).toHaveLength(2);
 
-    expect(secondPage.body.page).toBe(2);
-    expect(secondPage.body.pageSize).toBe(2);
-    expect(secondPage.body.totalCount).toBe(3);
-    expect(secondPage.body.pagesCount).toBe(2);
-    expect(secondPage.body.items).toHaveLength(1);
+    expect(secondPage.body.meta.page).toBe(2);
+    expect(secondPage.body.meta.pageSize).toBe(2);
+    expect(secondPage.body.meta.totalCount).toBe(3);
+    expect(secondPage.body.meta.pagesCount).toBe(2);
+    expect(secondPage.body.data).toHaveLength(1);
 
-    expect(secondPage.body.items[0].id).not.toBe(firstPage.body.items[0].id);
-    expect(secondPage.body.items[0].id).not.toBe(firstPage.body.items[1].id);
+    expect(secondPage.body.data[0].id).not.toBe(firstPage.body.data[0].id);
+    expect(secondPage.body.data[0].id).not.toBe(firstPage.body.data[1].id);
   });
 
   it('GET /blogs should return empty items with correct pagination metadata when db is empty', async () => {
@@ -86,11 +92,13 @@ describe('Blog API pagination', () => {
       .expect(HTTP_STATUSES.OK_200);
 
     expect(res.body).toEqual({
-      pagesCount: 0,
-      page: 1,
-      pageSize: 10,
-      totalCount: 0,
-      items: [],
+      meta: {
+        pagesCount: 0,
+        page: 1,
+        pageSize: 10,
+        totalCount: 0,
+      },
+      data: [],
     });
   });
 
@@ -105,10 +113,10 @@ describe('Blog API pagination', () => {
       .get(`${routerPath.blogs}?pageNumber=3&pageSize=2`)
       .expect(HTTP_STATUSES.OK_200);
 
-    expect(res.body.page).toBe(3);
-    expect(res.body.pageSize).toBe(2);
-    expect(res.body.totalCount).toBe(5);
-    expect(res.body.pagesCount).toBe(3);
-    expect(res.body.items).toHaveLength(1);
+    expect(res.body.meta.page).toBe(3);
+    expect(res.body.meta.pageSize).toBe(2);
+    expect(res.body.meta.totalCount).toBe(5);
+    expect(res.body.meta.pagesCount).toBe(3);
+    expect(res.body.data).toHaveLength(1);
   });
 });

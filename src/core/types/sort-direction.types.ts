@@ -1,3 +1,4 @@
-export const sortDirections = ['asc', 'desc'] as const;
-
-export type SortDirection = typeof sortDirections[number];
+export enum SortDirection {
+  Asc = 'asc',
+  Desc = 'desc',
+}

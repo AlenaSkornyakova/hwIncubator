@@ -4,17 +4,18 @@ import { createPostHandler } from './handlers/create-post.handler';
 import { getPostByIdHandler } from './handlers/get-post-by-id.handler';
 import { updatePostHandler } from './handlers/update-post.handler';
 import { deletePostHandler } from './handlers/delete-post.handler';
-import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation.middleware';
-import { postInputValidation } from '../validation/post-input.validation';
+import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation-result.middleware';
+import { postCreateInputValidation, postUpdateInputValidation } from './post-input-dto-validation.middleware';
 import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
 import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
-import { postQueryValidation } from '../validation/post-query.validation';
+import { paginationAndSortingValidation } from '../../../core/middlewares/query-pagination-sorting.validation-middleware';
+import { postSortFields } from './input/posts-sort-fields';
 
 export const postsRouter = express.Router();
 
   postsRouter
-.get('/', postQueryValidation, inputValidationResultMiddleware, getPostsListHandler)
-.post('/',  superAdminGuardMiddleware, postInputValidation, inputValidationResultMiddleware, createPostHandler,)
+.get('/', paginationAndSortingValidation(postSortFields), inputValidationResultMiddleware, getPostsListHandler)
+.post('/',  superAdminGuardMiddleware, postCreateInputValidation, inputValidationResultMiddleware, createPostHandler,)
 .get('/:id',  paramsIdValidation,inputValidationResultMiddleware,getPostByIdHandler)
-.put('/:id', superAdminGuardMiddleware, paramsIdValidation, postInputValidation, inputValidationResultMiddleware, updatePostHandler) 
+.put('/:id', superAdminGuardMiddleware, paramsIdValidation, postUpdateInputValidation, inputValidationResultMiddleware, updatePostHandler) 
 .delete('/:id', superAdminGuardMiddleware, paramsIdValidation, inputValidationResultMiddleware, deletePostHandler);

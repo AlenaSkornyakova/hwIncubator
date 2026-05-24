@@ -1,4 +1,4 @@
-import { param} from 'express-validator';
+import {body, param} from 'express-validator';
 
 export const paramsIdValidation = param('id')
   .exists()
@@ -9,5 +9,15 @@ export const paramsIdValidation = param('id')
   .isMongoId()
   .withMessage('Incorrect format of ObjectId');
  
-  
+//needed for PUT /blogs/:id and PUT /posts/:id to ensure that the ID in the URL and in the request body match
+  export const dataIdMatchValidation = body('data.id')
+  .exists()
+  .withMessage('ID in body is required')
+  .custom((value, { req }) => {
+    if (value !== req?.params?.id) {
+      throw new Error('ID in URL and body must match');
+    }
+    return true;
+  });
+
  

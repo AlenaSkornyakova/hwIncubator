@@ -1,5 +1,5 @@
 import { SortDirection } from './sort-direction.types';
-export type PaginationAndSortingQuery<TSortBy extends string> = {
+export type PaginationAndSortingQuery<TSortBy> = {
   pageNumber: number;
   pageSize: number;
   sortBy: TSortBy;

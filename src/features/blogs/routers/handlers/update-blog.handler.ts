@@ -1,26 +1,38 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithBody, RequestWithParams } from '../../../../core/types/request.types';
+import { RequestWithBody, RequestWithParams } from '../../../../core/types/request-types.types';
 import { BlogCreateInput } from '../input/blog-crete.input';
 import { blogsService } from '../../ application/blogs.service';
+import { BlogUpdateDto } from '../../dto/blog-update.dto';
+import { BlogUpdateInput } from '../input/blog-update.input';
+import { matchedData } from 'express-validator/lib/matched-data';
+import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const updateBlogHandler = async (
-  req: RequestWithParams<{ id: string }> & RequestWithBody<BlogCreateInput>,
+  req: RequestWithParams<{ id: string }> & RequestWithBody<BlogUpdateInput>,
   res: Response,
 ) => {
   try {
     const id = req.params.id;
+    const input = matchedData<BlogUpdateInput>(req, {
+      locations: ['body'],
+      includeOptionals: true,
+    });
 
-    const updated = await blogsService.updateById(id, req.body);
+    const attributes = input.data.attributes;
 
-    if (!updated) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-    }
+    const dto: BlogUpdateDto = {
+      name: attributes.name,
+      description: attributes.description,
+      websiteUrl: attributes.websiteUrl,
+    };
+
+    await blogsService.updateById(id, dto);
 
     return res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
-
   } catch (error) {
     console.error('Update blog failed:', error);
-    return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
+    return errorsHandler(error, res);
   }
 };
+    

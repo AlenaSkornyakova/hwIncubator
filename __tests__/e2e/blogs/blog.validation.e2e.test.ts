@@ -8,6 +8,7 @@ import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';
 import { createTestApp } from '../../utils/createTestApp';
 import { expectBlogOutput } from '../../utils/matchers';
+import { ResourceType } from '../../../src/core/types/resource-type.types';
 
 describe('Blog API body validation check', () => {
   const ADMIN_AUTH = generateBasicAuthHeader(TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD);
@@ -18,9 +19,14 @@ describe('Blog API body validation check', () => {
   });
 
   const correctBlogData: BlogCreateInput = {
-    name: 'Test Blog Name',
-    description: 'Test description for Blog',
-    websiteUrl: 'https://testblog.com',
+    data: {
+      type: ResourceType.Blogs,
+      attributes: {
+        name: 'Test Blog Name',
+        description: 'Test description for Blog',
+        websiteUrl: 'https://testblog.com',
+      },
+    },
   };
 
   it('POST /blogs should not create blog when incorrect body passed.', async () => {
@@ -30,9 +36,15 @@ describe('Blog API body validation check', () => {
       .set('Authorization', ADMIN_AUTH)
       .send({
         ...correctBlogData,
-        name: '   ',
-        description: '',
-        websiteUrl: '',
+        data: {
+          ...correctBlogData.data,
+          attributes: {
+            ...correctBlogData.data.attributes,
+            name: '   ',
+            description: '',
+            websiteUrl: '',
+          },
+        },
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
@@ -44,39 +56,51 @@ describe('Blog API body validation check', () => {
       .set('Authorization', ADMIN_AUTH)
       .send({
         ...correctBlogData,
-        websiteUrl: 'invalid-url',
+        data: {
+          ...correctBlogData.data,
+          attributes: {
+            ...correctBlogData.data.attributes,
+            websiteUrl: 'invalid-url',
+          },
+        },
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
     expect(invalidDataSet2.body.errorsMessages).toHaveLength(1);
 
     const list = await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200);
-    expect(list.body.items).toHaveLength(0);
-    expect(list.body.totalCount).toBe(0);
-    expect(list.body.page).toBe(1);
-    expect(list.body.pageSize).toBe(10);
-    expect(list.body.pagesCount).toBe(0);
+    expect(list.body.data).toHaveLength(0);
+    expect(list.body.meta.totalCount).toBe(0);
+    expect(list.body.meta.page).toBe(1);
+    expect(list.body.meta.pageSize).toBe(10);
+    expect(list.body.meta.pagesCount).toBe(0);
   });
 
   it(' PUT /blogs/:id should not update blog when incorrect body passed.', async () => {
     const { createdEntity } = await blogTestManager.createBlog(app, correctBlogData);
 
     const invalidUpdate = await request(app)
-      .put(`${routerPath.blogs}/${createdEntity.id}`)
+      .put(`${routerPath.blogs}/${createdEntity.data.id}`)
       .set('Authorization', ADMIN_AUTH)
       .send({
-        name: '   ',
-        description: '',
-        websiteUrl: 'invalid-url',
+        data: {
+          id: createdEntity.data.id,
+          type: ResourceType.Blogs,
+          attributes: {
+            name: '   ',
+            description: '',
+            websiteUrl: 'invalid-url',
+          },
+        },
       })
       .expect(HTTP_STATUSES.BAD_REQUEST_400);
 
     expect(invalidUpdate.body.errorsMessages).toHaveLength(3);
 
     const get = await request(app)
-      .get(`${routerPath.blogs}/${createdEntity.id}`)
+      .get(`${routerPath.blogs}/${createdEntity.data.id}`)
       .expect(HTTP_STATUSES.OK_200);
 
-    expectBlogOutput(get.body, correctBlogData);
+    expectBlogOutput(get.body.data, createdEntity.data.attributes);
   });
 });

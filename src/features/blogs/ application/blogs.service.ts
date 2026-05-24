@@ -4,20 +4,23 @@ import { WithId } from 'mongodb';
 import { Blog } from '../domain/blog.type';
 import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
 import { BlogsQueryInput } from '../routers/input/blogs-query-input';
-
-
+import { BlogCreateDto } from '../dto/blog-create.dto';
 
 export const blogsService = {
-  async findMany(queryInput:BlogsQueryInput ): Promise<PaginatedBlogsDbResultDto> {
+  async findMany(queryInput: BlogsQueryInput): Promise<PaginatedBlogsDbResultDto> {
     return await blogsRepository.findMany(queryInput);
   },
 
   async findById(id: string): Promise<WithId<Blog> | null> {
     return await blogsRepository.findById(id);
   },
+  
+  async findByIdOrFail(id: string): Promise<WithId<Blog>> {
+    return await blogsRepository.findByIdOrFail(id);
+  },
 
-  async create(dto: BlogCreateInput): Promise<WithId<Blog>> {
-     const newBlog: Blog = {
+  async create(dto: BlogCreateDto): Promise<WithId<Blog>> {
+    const newBlog: Blog = {
       name: dto.name,
       description: dto.description,
       websiteUrl: dto.websiteUrl,
@@ -27,11 +30,11 @@ export const blogsService = {
     return await blogsRepository.create(newBlog);
   },
 
-  async updateById(id: string, dto: BlogCreateInput): Promise<boolean> {
+  async updateById(id: string, dto: BlogCreateDto): Promise<void> {
     return await blogsRepository.updateById(id, dto);
   },
 
-  async deleteById(id: string): Promise<boolean> {
+  async deleteById(id: string): Promise<void> {
     return await blogsRepository.deleteById(id);
   },
 };
