@@ -111,4 +111,32 @@ describe('Blog API pagination', () => {
     expect(res.body.pagesCount).toBe(3);
     expect(res.body.items).toHaveLength(1);
   });
+  it('GET /blogs should filter by searchNameTerm', async () => {
+  await blogTestManager.createBlog(app, {
+    name: 'Tim',
+    description: 'description',
+    websiteUrl: 'https://someurl.com',
+  });
+
+  await blogTestManager.createBlog(app, {
+    name: 'Alex',
+    description: 'description',
+    websiteUrl: 'https://someurl.com',
+  });
+
+  const response = await request(app)
+    .get('/blogs')
+    .query({
+      searchNameTerm: 'Tim',
+      sortBy: 'name',
+      sortDirection: 'asc',
+      pageNumber: 1,
+      pageSize: 10,
+    })
+    .expect(200);
+
+  expect(response.body.items).toHaveLength(1);
+
+  expect(response.body.items[0].name).toBe('Tim');
+});
 });

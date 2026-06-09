@@ -15,19 +15,23 @@ export const getBlogsListHandler = async (
 ) => {
   
   try {
+    console.log('REQ QUERY:', req.query);
+
     const sanitizedQuery = matchedData<BlogsQueryInput>(req, {
       locations: ['query'],
       includeOptionals: true,
     });
-
-    const queryInput: BlogsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
+console.log('SANITIZED QUERY:', sanitizedQuery);
+    const queryInput: BlogsQueryInput = setDefaultSortAndPaginationIfNotExist<BlogsQueryInput['sortBy']>(sanitizedQuery);
 
     const blogs = await blogsService.findMany(queryInput);
+    
 
     return res.status(HTTP_STATUSES.OK_200).json({
       ...blogs,
       items: blogs.items.map(mapBlog),
     });
+    
   } catch (error) {
     console.error('Get blogs list failed:', error);
     return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
