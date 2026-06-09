@@ -29,7 +29,7 @@ export const createPostByBlogIdHandler = async (
     return res.status(HTTP_STATUSES.CREATED_201).json(mapPost(createdPost));
   } catch (error) {
     if (error instanceof BlogNotFoundError) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+      return res.status(HTTP_STATUSES.NOT_FOUND_404).json({
         errorsMessages: [{ field: 'blogId', message: 'blogId is invalid' }],
       });
     }

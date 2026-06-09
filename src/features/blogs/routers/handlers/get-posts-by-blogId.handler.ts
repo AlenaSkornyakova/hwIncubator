@@ -17,9 +17,7 @@ export const getPostsByBlogIdHandler = async (
   req: RequestWithParams<{ id: string }>& RequestWithQuery<PostsQueryInputModelDto>,
   res: Response<PaginatedPostsViewModelDto>,
 ) => {
-  
-
- 
+   
   try {
     const sanitizedQuery = matchedData<PostsQueryInput>(req, {
       locations: ['query' ],
