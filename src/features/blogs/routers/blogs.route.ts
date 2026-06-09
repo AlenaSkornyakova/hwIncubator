@@ -15,11 +15,12 @@ import { paginationAndSortingValidation } from '../../../core/middlewares/query-
 import { blogSortFields } from './input/blog-sort-fields';
 import { blogCreateInputValidation, blogUpdateInputValidation } from '../routers/blog-input-dto-validation.middleware';
 import { postSortFields } from '../../posts/routers/input/posts-sort-fields';
+import { blogQueryValidation } from '../../blogs/routers/blog-query-validation.middleware';
 
 export const blogsRouter = express.Router();
 
 blogsRouter
-.get('/', paginationAndSortingValidation(blogSortFields), inputValidationResultMiddleware, getBlogsListHandler)
+.get('/', paginationAndSortingValidation(blogSortFields), blogQueryValidation, inputValidationResultMiddleware, getBlogsListHandler)
 .post('/', superAdminGuardMiddleware, blogCreateInputValidation, inputValidationResultMiddleware,createBlogHandler )
 .post('/:id/posts', superAdminGuardMiddleware, paramsIdValidation, createPostForBlogInputValidation, inputValidationResultMiddleware, createPostByBlogIdHandler)
 .get('/:id', paramsIdValidation, inputValidationResultMiddleware, getBlogByIdHandler)

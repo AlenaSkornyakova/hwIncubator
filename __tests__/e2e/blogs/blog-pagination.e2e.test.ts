@@ -2,26 +2,26 @@ import request from 'supertest';
 import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
 import { routerPath } from '../../../src/core/paths/paths';
 import { clearDb } from '../../utils/clear-db';
-import { blogTestManager } from '../../utils/test-managers';  
+import { blogTestManager } from '../../utils/test-managers';
 import { createTestApp } from '../../utils/createTestApp';
 import { ResourceType } from '../../../src/core/types/resource-type.types';
 
 describe('Blog API pagination', () => {
-    const app = createTestApp();
+  const app = createTestApp();
   beforeEach(async () => {
     await clearDb(app);
   });
 
   const createBlog = async (name: string) => {
     const created = await blogTestManager.createBlog(app, {
-       data: {
-            type: ResourceType.Blogs,
-            attributes: {
-              name,
-              description: `Description for ${name}`,
-              websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '-')}.com`,
-            },
-          },
+      data: {
+        type: ResourceType.Blogs,
+        attributes: {
+          name,
+          description: `Description for ${name}`,
+          websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '-')}.com`,
+        },
+      },
     });
 
     return created.createdEntity ?? created;
@@ -32,9 +32,7 @@ describe('Blog API pagination', () => {
     await createBlog('Blog 2');
     await createBlog('Blog 3');
 
-    const res = await request(app)
-      .get(routerPath.blogs)
-      .expect(HTTP_STATUSES.OK_200);
+    const res = await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200);
 
     expect(res.body.meta.page).toBe(1);
     expect(res.body.meta.pageSize).toBe(10);
@@ -87,9 +85,7 @@ describe('Blog API pagination', () => {
   });
 
   it('GET /blogs should return empty items with correct pagination metadata when db is empty', async () => {
-    const res = await request(app)
-      .get(routerPath.blogs)
-      .expect(HTTP_STATUSES.OK_200);
+    const res = await request(app).get(routerPath.blogs).expect(HTTP_STATUSES.OK_200);
 
     expect(res.body).toEqual({
       meta: {
@@ -118,5 +114,21 @@ describe('Blog API pagination', () => {
     expect(res.body.meta.totalCount).toBe(5);
     expect(res.body.meta.pagesCount).toBe(3);
     expect(res.body.data).toHaveLength(1);
+  });
+  it('GET /blogs should filter blogs by searchNameTerm', async () => {
+    await createBlog('Tim');
+    await createBlog('Tima');
+    await createBlog('Alex');
+
+    const res = await request(app)
+      .get(`${routerPath.blogs}?searchNameTerm=Tim&sortBy=name&sortDirection=asc`)
+      .expect(HTTP_STATUSES.OK_200);
+
+    expect(res.body.meta.totalCount).toBe(2);
+    expect(res.body.meta.pagesCount).toBe(1);
+
+    expect(res.body.data).toHaveLength(2);
+
+    expect(res.body.data.map((blog: any) => blog.attributes.name)).toEqual(['Tim', 'Tima']);
   });
 });
