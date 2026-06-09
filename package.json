@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
-    "dev": "nodemon --inspect dist/index.js",
-    "dev:local": "dotenv -e .env.local -- nodemon dist/index.js",
+    "dev": "nodemon --inspect dist/src/index.js",
+    "dev:local": "dotenv -e .env.local -- nodemon dist/src/index.js",
     "jest": "jest -i",
     "lint": "eslint --fix .",
     "format": "prettier --write .",
