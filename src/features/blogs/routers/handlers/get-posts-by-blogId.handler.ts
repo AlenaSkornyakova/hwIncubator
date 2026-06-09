@@ -9,6 +9,7 @@ import { postsService } from '../../../posts/application/posts.service';
 import { PostsQueryInput } from '../../../posts/types/posts-query-input'; 
 import { RequestWithQuery } from '../../../../core/types/request.types';
 import { PostsQueryInputModelDto } from '../../../posts/dto/posts.query-imput.dto';
+import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
 
 
 
@@ -16,10 +17,7 @@ export const getPostsByBlogIdHandler = async (
   req: RequestWithParams<{ id: string }>& RequestWithQuery<PostsQueryInputModelDto>,
   res: Response<PaginatedPostsViewModelDto>,
 ) => {
-  const DEFAULT_PAGE_NUMBER = 1;
-  const DEFAULT_PAGE_SIZE = 10;
-  const DEFAULT_SORT_BY: PostsQueryInput['sortBy'] = 'createdAt';
-  const DEFAULT_SORT_DIRECTION: PostsQueryInput['sortDirection'] = 'desc';
+  
 
  
   try {
@@ -28,12 +26,8 @@ export const getPostsByBlogIdHandler = async (
       includeOptionals: true,
     });
 
-    const queryInput: PostsQueryInput = {
-          pageNumber: sanitizedQuery.pageNumber ?? DEFAULT_PAGE_NUMBER,
-          pageSize: sanitizedQuery.pageSize ?? DEFAULT_PAGE_SIZE,
-          sortBy: sanitizedQuery.sortBy ?? DEFAULT_SORT_BY,
-          sortDirection: sanitizedQuery.sortDirection ?? DEFAULT_SORT_DIRECTION,
-        };
+    const queryInput: PostsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
+
          
     const blogId = req.params.id;
 

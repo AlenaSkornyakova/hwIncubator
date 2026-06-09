@@ -8,27 +8,20 @@ import { PostsQueryInputModelDto } from '../../dto/posts.query-imput.dto';
 import { postsService } from '../../application/posts.service';
 import { matchedData } from 'express-validator/lib/matched-data';
 import { PaginatedPostsViewModelDto } from '../../dto/posts.paginated-view.model.dto';
+import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
 
 export const getPostsListHandler = async (
   req: RequestWithQuery<PostsQueryInputModelDto>,
   res: Response<PaginatedPostsViewModelDto>,
 ) => {
-  const DEFAULT_PAGE_NUMBER = 1;
-  const DEFAULT_PAGE_SIZE = 10;
-  const DEFAULT_SORT_BY: PostsQueryInput['sortBy'] = 'createdAt';
-  const DEFAULT_SORT_DIRECTION: PostsQueryInput['sortDirection'] = 'desc';
+  
   try {
     const sanitizedQuery = matchedData<PostsQueryInput>(req, {
       locations: ['query'],
       includeOptionals: true,
     });
 
-    const queryInput: PostsQueryInput = {
-      pageNumber: sanitizedQuery.pageNumber ?? DEFAULT_PAGE_NUMBER,
-      pageSize: sanitizedQuery.pageSize ?? DEFAULT_PAGE_SIZE,
-      sortBy: sanitizedQuery.sortBy ?? DEFAULT_SORT_BY,
-      sortDirection: sanitizedQuery.sortDirection ?? DEFAULT_SORT_DIRECTION,
-    };
+    const queryInput: PostsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);  
     const posts = await postsService.findMany(queryInput);
 
     return res.status(HTTP_STATUSES.OK_200).json({

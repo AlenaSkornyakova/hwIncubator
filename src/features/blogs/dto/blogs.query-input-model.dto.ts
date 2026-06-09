@@ -1,5 +1,5 @@
 import { BlogSortBy } from "../types/blog-sort-fields";
-import { SortDirection } from "../../../core/types/sort-direction";
+import { SortDirection } from "../../../core/types/sort-direction.types";
 
 export type BlogsQueryInputModelDto = {
   pageNumber?: string;

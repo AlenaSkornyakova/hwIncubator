@@ -1,4 +1,4 @@
-import { SortDirection } from "../../../core/types/sort-direction";
+import { SortDirection } from "../../../core/types/sort-direction.types";
 import { PostSortBy } from "../types/posts-sort-fields";
 
 export type PostsQueryInputModelDto = {

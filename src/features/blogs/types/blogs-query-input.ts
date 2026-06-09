@@ -1,12 +1,6 @@
-
-import { SortDirection} from '../../../core/types/sort-direction';
+import { PaginationAndSortingQuery } from '../../../core/types/pagination-and-sorting.types';
 import { BlogSortBy } from './blog-sort-fields';
 
-
-export type BlogsQueryInput = {
-  pageNumber: number;
-  pageSize: number;
-  sortBy: BlogSortBy;
-  sortDirection: SortDirection;
-  searchNameTerm: string;
+export type BlogsQueryInput = PaginationAndSortingQuery<BlogSortBy> & {
+  searchNameTerm?: string;
 };

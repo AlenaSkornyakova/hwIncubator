@@ -7,16 +7,12 @@ import { BlogsQueryInputModelDto } from '../../dto/blogs.query-input-model.dto';
 import { PaginatedBlogsViewModelDto } from '../../dto/blogs.paginated-view-model.dto';
 import { matchedData } from 'express-validator/lib/matched-data';
 import { BlogsQueryInput } from '../../types/blogs-query-input';
+import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination'; 
 
 export const getBlogsListHandler = async (
   req: RequestWithQuery<BlogsQueryInputModelDto>,
   res: Response<PaginatedBlogsViewModelDto>,
 ) => {
-  const DEFAULT_PAGE_NUMBER = 1;
-  const DEFAULT_PAGE_SIZE = 10;
-  const DEFAULT_SEARCH_NAME_TERM = null;
-  const DEFAULT_SORT_BY: BlogsQueryInput['sortBy'] = 'createdAt';
-  const DEFAULT_SORT_DIRECTION: BlogsQueryInput['sortDirection'] = 'desc';
   
   try {
     const sanitizedQuery = matchedData<BlogsQueryInput>(req, {
@@ -24,13 +20,7 @@ export const getBlogsListHandler = async (
       includeOptionals: true,
     });
 
-    const queryInput: BlogsQueryInput = {
-      pageNumber: sanitizedQuery.pageNumber ?? DEFAULT_PAGE_NUMBER,
-      pageSize: sanitizedQuery.pageSize ?? DEFAULT_PAGE_SIZE,
-      searchNameTerm: sanitizedQuery.searchNameTerm ?? DEFAULT_SEARCH_NAME_TERM,
-      sortBy: sanitizedQuery.sortBy ?? DEFAULT_SORT_BY,
-      sortDirection: sanitizedQuery.sortDirection ?? DEFAULT_SORT_DIRECTION,
-    };
+    const queryInput: BlogsQueryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
     const blogs = await blogsService.findMany(queryInput);
 
@@ -43,15 +33,3 @@ export const getBlogsListHandler = async (
     return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
   }
 };
-
-//   const mappedItems = items.map(mapToBlogViewModel);
-
-//   const output = mapToPaginatedOutput({
-//     items: mappedItems,
-//     page: queryInput.pageNumber,
-//     pageSize: queryInput.pageSize,
-//     totalCount,
-//   });
-
-//   res.status(200).json(output);
-// }

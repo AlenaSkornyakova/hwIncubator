@@ -11,18 +11,19 @@ import { paramsIdValidation } from '../../../core/middlewares/params-id.validati
 import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
 import { createPostByBlogIdHandler } from './handlers/create-post-by-blogId.handler';
 import { createPostForBlogInputValidation } from '../../posts/validation/post-input.validation';
-import { blogQueryValidation } from '../validation/blog-query.validation';
-import { postQueryValidation } from '../../posts/validation/post-query.validation';
+import { paginationAndSortingValidation } from '../../../core/middlewares/query-pagination-sorting.validation-middleware';
+import { postSortFields } from '../../posts/types/posts-sort-fields';
+import { blogSortFields } from '../types/blog-sort-fields';
 
    
 
 export const blogsRouter = express.Router();
 
 blogsRouter
-.get('/', blogQueryValidation, inputValidationResultMiddleware, getBlogsListHandler)
+.get('/',paginationAndSortingValidation(blogSortFields), inputValidationResultMiddleware, getBlogsListHandler)
 .post('/', superAdminGuardMiddleware, blogInputValidation, inputValidationResultMiddleware,createBlogHandler )
 .post('/:id/posts', superAdminGuardMiddleware, paramsIdValidation, createPostForBlogInputValidation, inputValidationResultMiddleware, createPostByBlogIdHandler)
 .get('/:id', paramsIdValidation, inputValidationResultMiddleware, getBlogByIdHandler)
-.get ('/:id/posts',paramsIdValidation,  postQueryValidation, inputValidationResultMiddleware, getPostsByBlogIdHandler)
+.get ('/:id/posts',paramsIdValidation,  paginationAndSortingValidation(postSortFields), inputValidationResultMiddleware, getPostsByBlogIdHandler)
 .put('/:id', superAdminGuardMiddleware, paramsIdValidation, blogInputValidation, inputValidationResultMiddleware, updateBlogHandler)
 .delete('/:id', superAdminGuardMiddleware, paramsIdValidation, inputValidationResultMiddleware, deleteBlogHandler)
