@@ -15,7 +15,7 @@ import { paginationAndSortingValidation } from '../../../core/middlewares/query-
 import { postSortFields } from '../../posts/types/posts-sort-fields';
 import { blogSortFields } from '../types/blog-sort-fields';
 import { blogQueryValidation } from '../validation/blog-query.validation';
-import { postQueryValidation } from '../../posts/validation/post-query.validation';
+
 
    
 
@@ -26,6 +26,6 @@ blogsRouter
 .post('/', superAdminGuardMiddleware, blogInputValidation, inputValidationResultMiddleware,createBlogHandler )
 .post('/:id/posts', superAdminGuardMiddleware, paramsIdValidation, createPostForBlogInputValidation, inputValidationResultMiddleware, createPostByBlogIdHandler)
 .get('/:id', paramsIdValidation, inputValidationResultMiddleware, getBlogByIdHandler)
-.get ('/:id/posts',paramsIdValidation,  paginationAndSortingValidation(postSortFields), postQueryValidation, inputValidationResultMiddleware, getPostsByBlogIdHandler)
+.get ('/:id/posts',paramsIdValidation,  paginationAndSortingValidation(postSortFields), inputValidationResultMiddleware, getPostsByBlogIdHandler)
 .put('/:id', superAdminGuardMiddleware, paramsIdValidation, blogInputValidation, inputValidationResultMiddleware, updateBlogHandler)
 .delete('/:id', superAdminGuardMiddleware, paramsIdValidation, inputValidationResultMiddleware, deleteBlogHandler)
