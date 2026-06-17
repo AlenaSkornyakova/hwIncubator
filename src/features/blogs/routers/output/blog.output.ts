@@ -1,4 +1,8 @@
-import   {BlogDataOutput}  from './blog-data.output';
 export type BlogOutput = {
-  data: BlogDataOutput;
-};
+    id: string;
+    name: string;
+    description: string;
+    websiteUrl: string;
+    createdAt: string;
+    isMembership: boolean;
+  };

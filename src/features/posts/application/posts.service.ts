@@ -1,4 +1,3 @@
-import { PostCreateInput } from '../routers/input/post-create.input';
 import { postsRepository } from '../repositories/posts-db.repository';
 import { WithId } from 'mongodb';
 import { Post } from '../routers/domain/post.type';
@@ -8,6 +7,7 @@ import { blogsRepository } from '../../blogs/repositories/blogs-db.repository';
 import { PostCreateDto } from '../dto/post-create.dto';
 import { DomainError } from '../../../core/errors/domain.error';
 import { PostCreateForBlogDto } from '../dto/post-create-for-blog.dto';
+import { PostUpdateDto } from '../dto/post-update.dto';
 
 
 
@@ -63,7 +63,7 @@ export const postsService = {
   return postsRepository.create(newPost);
 },
 
-  async updateById(id: string, dto: PostCreateDto): Promise<void> {
+  async updateById(id: string, dto: PostUpdateDto): Promise<void> {
     return await postsRepository.update(id, dto);
   },
 

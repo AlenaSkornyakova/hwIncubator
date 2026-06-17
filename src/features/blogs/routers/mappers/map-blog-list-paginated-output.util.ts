@@ -1,35 +1,28 @@
 import { WithId } from 'mongodb';
 import { Blog } from '../../domain/blog.type';
-import { ResourceType } from '../../../../core/types/resource-type.types';
 import { BlogListPaginatedOutput } from '../output/blog-list-paginated-output';
-import { BlogDataOutput } from '../output/blog-data.output';
+import { BlogOutput } from '../output/blog.output';
 
 export function mapToBlogListPaginatedOutput(
   blogs: WithId<Blog>[],
-  meta: { 
-    pageNumber: number; 
-    pageSize: number; 
-    totalCount: number },
+    pageNumber: number,
+    pageSize: number,
+    totalCount: number
 ): BlogListPaginatedOutput {
   return {
-    meta: {
-      page: meta.pageNumber,
-      pageSize: meta.pageSize,
-      pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
-      totalCount: meta.totalCount,
-    },
-    data: blogs.map(
-      (blog): BlogDataOutput => ({
-        type: ResourceType.Blogs,
+      page: pageNumber,
+      pageSize:  pageSize,
+      pagesCount: Math.ceil(totalCount / pageSize),
+      totalCount: totalCount,
+    items: blogs.map(
+      (blog): BlogOutput => ({
         id: blog._id.toString(),
-        attributes: {
-          name: blog.name,
-          description: blog.description,
-          websiteUrl: blog.websiteUrl,
-          createdAt: blog.createdAt.toISOString(),
-          isMembership: blog.isMembership,
-        },
-      }),
+        name: blog.name,  
+        description: blog.description,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt.toISOString(),
+        isMembership: blog.isMembership,
+      })
     ),
   };
 }

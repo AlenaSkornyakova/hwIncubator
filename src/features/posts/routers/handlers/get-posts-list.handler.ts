@@ -24,11 +24,12 @@ export const getPostsListHandler = async (
 
     const { items, totalCount } = await postsService.findMany(queryInput);
 
-    const output = mapToPostListPaginatedOutput(items, {
-      pageNumber: queryInput.pageNumber,
-      pageSize: queryInput.pageSize,
+    const output = mapToPostListPaginatedOutput(
+      items,
+      queryInput.pageNumber,
+      queryInput.pageSize,
       totalCount,
-    });
+    );
 
     return res.status(HTTP_STATUSES.OK_200).json(output);
   } catch (error) {

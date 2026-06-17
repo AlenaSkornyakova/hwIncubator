@@ -1,9 +1,7 @@
 import { body } from 'express-validator';
-import { ResourceType } from '../../../core/types/resource-type.types';
-import { resourceTypeValidation } from '../../../core/middlewares/resource-type.validation-middleware';
-import { dataIdMatchValidation } from '../../../core/middlewares/params-id.validation.middleware';
 
-const nameValidation = body('data.attributes.name')
+
+const nameValidation = body('name')
   .isString()
   .withMessage('name should be string')
   .trim()
@@ -14,7 +12,7 @@ const nameValidation = body('data.attributes.name')
     'name is invalid, it must be a string with length between 2 and 15 characters',
   );
 
-const descriptionValidation = body('data.attributes.description')
+const descriptionValidation = body('description')
   .isString()
   .withMessage('description should be string')
   .trim()
@@ -25,7 +23,7 @@ const descriptionValidation = body('data.attributes.description')
     'description is invalid, it must be a string with length between 2 and 500 characters',
   );
 
-const websiteUrlValidation = body('data.attributes.websiteUrl')
+const websiteUrlValidation = body('websiteUrl')
   .isString()
   .withMessage('websiteUrl should be string')
   .trim()
@@ -41,15 +39,12 @@ const websiteUrlValidation = body('data.attributes.websiteUrl')
   .withMessage('websiteUrl must match valid https URL pattern');
 
 export const blogCreateInputValidation = [
-  resourceTypeValidation(ResourceType.Blogs),
   nameValidation,
   descriptionValidation,
   websiteUrlValidation,
 ];
 
 export const blogUpdateInputValidation = [
-  resourceTypeValidation(ResourceType.Blogs),
-  dataIdMatchValidation,
   nameValidation,
   descriptionValidation,
   websiteUrlValidation,

@@ -24,11 +24,12 @@ export const getBlogsListHandler = async (
 
     const { items, totalCount } = await blogsService.findMany(queryInput);
 
-    const output = mapToBlogListPaginatedOutput(items, {
-      pageNumber: queryInput.pageNumber,
-      pageSize: queryInput.pageSize,
+    const output = mapToBlogListPaginatedOutput(
+      items, 
+      queryInput.pageNumber,
+      queryInput.pageSize,
       totalCount,
-    });
+    );
 
     return res.status(HTTP_STATUSES.OK_200).json(output);
   } catch (error) {

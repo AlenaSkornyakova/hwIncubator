@@ -18,13 +18,12 @@ export const createPostHandler = async (
       locations: ['body'],
       includeOptionals: true,
     });
-    const attributes = sanitizedInput.data.attributes;
 
     const dto: PostCreateDto = {
-      title: attributes.title,
-      shortDescription: attributes.shortDescription,
-      content: attributes.content,
-      blogId: attributes.blogId,
+      title: sanitizedInput.title,
+      shortDescription: sanitizedInput.shortDescription,
+      content: sanitizedInput.content,
+      blogId: sanitizedInput.blogId,
     };
     const createdPost = await postsService.create(dto);
     return res.status(HTTP_STATUSES.CREATED_201).json(mapToPostOutput(createdPost));

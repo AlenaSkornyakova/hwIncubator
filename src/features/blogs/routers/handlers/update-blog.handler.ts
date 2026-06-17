@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithBody, RequestWithParams } from '../../../../core/types/request-types.types';
-import { BlogCreateInput } from '../input/blog-crete.input';
 import { blogsService } from '../../ application/blogs.service';
 import { BlogUpdateDto } from '../../dto/blog-update.dto';
 import { BlogUpdateInput } from '../input/blog-update.input';
@@ -14,17 +13,15 @@ export const updateBlogHandler = async (
 ) => {
   try {
     const id = req.params.id;
-    const input = matchedData<BlogUpdateInput>(req, {
+    const sanitizedInput = matchedData<BlogUpdateInput>(req, {
       locations: ['body'],
       includeOptionals: true,
     });
 
-    const attributes = input.data.attributes;
-
     const dto: BlogUpdateDto = {
-      name: attributes.name,
-      description: attributes.description,
-      websiteUrl: attributes.websiteUrl,
+      name: sanitizedInput.name,
+      description: sanitizedInput.description,
+      websiteUrl: sanitizedInput.websiteUrl,
     };
 
     await blogsService.updateById(id, dto);

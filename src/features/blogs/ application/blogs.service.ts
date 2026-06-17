@@ -5,6 +5,7 @@ import { Blog } from '../domain/blog.type';
 import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
 import { BlogsQueryInput } from '../routers/input/blogs-query-input';
 import { BlogCreateDto } from '../dto/blog-create.dto';
+import { BlogUpdateDto } from '../dto/blog-update.dto';
 
 export const blogsService = {
   async findMany(queryInput: BlogsQueryInput): Promise<PaginatedBlogsDbResultDto> {
@@ -30,7 +31,7 @@ export const blogsService = {
     return await blogsRepository.create(newBlog);
   },
 
-  async updateById(id: string, dto: BlogCreateDto): Promise<void> {
+  async updateById(id: string, dto: BlogUpdateDto): Promise<void> {
     return await blogsRepository.updateById(id, dto);
   },
 

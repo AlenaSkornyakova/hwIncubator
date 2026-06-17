@@ -1,5 +1,4 @@
 import { Post } from '../routers/domain/post.type';
-import { PostCreateInput } from '../routers/input/post-create.input';
 import { WithId, ObjectId, Filter } from 'mongodb';
 import { postCollection } from '../../../db/mongo.db';
 import { PostsQueryInput } from '../routers/input/posts-query-input';

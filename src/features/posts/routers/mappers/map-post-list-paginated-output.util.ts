@@ -1,37 +1,28 @@
 import { WithId } from 'mongodb';
 import { Post } from '../domain/post.type';
-import { ResourceType } from '../../../../core/types/resource-type.types';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
-import { PostDataOutput } from '../output/post-data.output';
+import { PostOutput } from '../output/post.output';
 
 export function mapToPostListPaginatedOutput(
   posts: WithId<Post>[],
-  meta: {
-    pageNumber: number;
-    pageSize: number;
-    totalCount: number;
-  },
+  pageNumber: number,
+  pageSize: number,
+  totalCount: number,
 ): PostListPaginatedOutput {
   return {
-    meta: {
-      page: meta.pageNumber,
-      pageSize: meta.pageSize,
-      pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
-      totalCount: meta.totalCount,
-    },
-
-    data: posts.map(
-      (post): PostDataOutput => ({
-        type: ResourceType.Posts,
+    page: pageNumber,
+    pageSize: pageSize,
+    pagesCount: Math.ceil(totalCount / pageSize),
+    totalCount: totalCount,
+    items: posts.map(
+      (post): PostOutput => ({
         id: post._id.toString(),
-        attributes: {
-          title: post.title,
-          shortDescription: post.shortDescription,
-          content: post.content,
-          blogId: post.blogId,
-          blogName: post.blogName,
-          createdAt: post.createdAt.toISOString(),
-        },
+        title: post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt.toISOString(),
       }),
     ),
   };

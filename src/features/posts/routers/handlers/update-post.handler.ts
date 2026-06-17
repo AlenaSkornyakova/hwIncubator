@@ -17,12 +17,11 @@ export const updatePostHandler = async (
       locations: ['body'],
       includeOptionals: true,
     });
-    const attributes = sanitizedInput.data.attributes;
     const dto: PostUpdateDto = {
-      title: attributes.title,
-      shortDescription: attributes.shortDescription,
-      content: attributes.content,
-      blogId: attributes.blogId,
+      title: sanitizedInput.title,
+      shortDescription: sanitizedInput.shortDescription,
+      content: sanitizedInput.content,
+      blogId: sanitizedInput.blogId,
     };
     const id = req.params.id;
     await postsService.updateById(id, dto);

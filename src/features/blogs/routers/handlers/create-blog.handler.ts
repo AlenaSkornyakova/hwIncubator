@@ -18,11 +18,11 @@ export const createBlogHandler = async (
       locations: ['body'],
       includeOptionals: true,
     });
-    const attributes = sanitizedInput.data.attributes;
+
     const dto: BlogCreateDto = {  
-      name: attributes.name,
-      description: attributes.description,
-      websiteUrl: attributes.websiteUrl,
+      name: sanitizedInput.name,
+      description: sanitizedInput.description,
+      websiteUrl: sanitizedInput.websiteUrl,
     };
     const createdBlog = await blogsService.create(dto);
     return res.status(HTTP_STATUSES.CREATED_201).json(mapToBlogOutput(createdBlog));

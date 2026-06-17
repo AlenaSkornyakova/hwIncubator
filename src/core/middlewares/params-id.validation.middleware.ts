@@ -10,7 +10,7 @@ export const paramsIdValidation = param('id')
   .withMessage('Incorrect format of ObjectId');
  
 //needed for PUT /blogs/:id and PUT /posts/:id to ensure that the ID in the URL and in the request body match
-  export const dataIdMatchValidation = body('data.id')
+  export const dataIdMatchValidation = body('id')
   .exists()
   .withMessage('ID in body is required')
   .custom((value, { req }) => {

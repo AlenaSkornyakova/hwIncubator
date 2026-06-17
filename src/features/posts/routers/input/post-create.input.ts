@@ -1,13 +1,6 @@
-import { ResourceType } from "../../../../core/types/resource-type.types";
-
 export type PostCreateInput = {
-  data: {
-    type: ResourceType.Posts;
-    attributes: {
       title: string;
       shortDescription: string;
       content: string;
       blogId: string;
     };
-  };
-};

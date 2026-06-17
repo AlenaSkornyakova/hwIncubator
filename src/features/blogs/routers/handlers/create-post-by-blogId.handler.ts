@@ -12,18 +12,17 @@ import { PostOutput } from '../../../posts/routers/output/post.output';
 
 export const createPostByBlogIdHandler = async (
   req: RequestWithParams<{ id: string }> & RequestWithBody<PostByBlogIdCreateInput>,
-  res: Response <PostOutput>,
+  res: Response <PostOutput>, 
 ) => {
   try {
     const sanitizedInput = matchedData<PostByBlogIdCreateInput>(req, {
       locations: ['body'],
       includeOptionals: true,
     });
-    const attributes = sanitizedInput.data.attributes;
     const dto: PostCreateForBlogDto = {
-      title: attributes.title,
-      shortDescription: attributes.shortDescription,
-      content: attributes.content,
+      title: sanitizedInput.title,
+      shortDescription: sanitizedInput.shortDescription,
+      content: sanitizedInput.content,
     };
     const blogId = req.params.id;
     const createdPost = await postsService.createForBlog(blogId, dto);

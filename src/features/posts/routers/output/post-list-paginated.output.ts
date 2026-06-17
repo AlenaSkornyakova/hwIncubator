@@ -1,6 +1,5 @@
 import { PaginatedOutput } from '../../../../core/types/paginated-output.types';
-
-import { PostDataOutput } from './post-data.output';
+import { PostOutput } from './post.output';
 
 export type PostListPaginatedOutput =
-  PaginatedOutput<PostDataOutput>;
+  PaginatedOutput<PostOutput>;
