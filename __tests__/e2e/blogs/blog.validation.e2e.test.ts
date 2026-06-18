@@ -2,7 +2,7 @@ import request from 'supertest';
 import { routerPath } from '../../../src/core/paths/paths';
 import { HTTP_STATUSES } from '../../../src/core/utils/http-status';
 import { blogTestManager } from '../../utils/test-managers';
-import { BlogCreateInput } from '../../../src/features/blogs/routers/input/blog-crete.input';
+import { BlogCreateInput } from '../../../src/features/blogs/api/input/blog-crete.input';
 import { clearDb } from '../../utils/clear-db';
 import { generateBasicAuthHeader } from '../../utils/generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../../config/admin-credentials';

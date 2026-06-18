@@ -5,7 +5,6 @@ import { RequestWithBody, RequestWithParams } from '../../../../core/types/reque
 import { postsService } from '../../application/posts.service';
 import { PostUpdateInput } from '../input/post-update.input';
 import { matchedData } from 'express-validator/lib/matched-data';
-import { PostUpdateDto } from '../../dto/post-update.dto';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const updatePostHandler = async (
@@ -17,7 +16,7 @@ export const updatePostHandler = async (
       locations: ['body'],
       includeOptionals: true,
     });
-    const dto: PostUpdateDto = {
+    const dto: PostUpdateInput = {
       title: sanitizedInput.title,
       shortDescription: sanitizedInput.shortDescription,
       content: sanitizedInput.content,

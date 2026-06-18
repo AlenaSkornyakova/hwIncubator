@@ -10,12 +10,12 @@ import { inputValidationResultMiddleware } from '../../../core/middlewares/input
 import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
 import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
 import { createPostByBlogIdHandler } from './handlers/create-post-by-blogId.handler';
-import { createPostForBlogInputValidation } from '../../posts/routers/post-input-dto-validation.middleware';
+import { createPostForBlogInputValidation } from '../../posts/api/middlewares/post-input-dto-validation.middleware';
 import { paginationAndSortingValidation } from '../../../core/middlewares/query-pagination-sorting.validation-middleware';
 import { blogSortFields } from './input/blog-sort-fields';
-import { blogCreateInputValidation, blogUpdateInputValidation } from '../routers/blog-input-dto-validation.middleware';
-import { postSortFields } from '../../posts/routers/input/posts-sort-fields';
-import { blogQueryValidation } from '../../blogs/routers/blog-query-validation.middleware';
+import { blogCreateInputValidation, blogUpdateInputValidation } from '../api/middlewares/blog-input-dto-validation.middleware';
+import { postSortFields } from '../../posts/api/input/posts-sort-fields';
+import { blogQueryValidation } from '../../blogs/api/middlewares/blog-query-validation.middleware';
 
 export const blogsRouter = express.Router();
 

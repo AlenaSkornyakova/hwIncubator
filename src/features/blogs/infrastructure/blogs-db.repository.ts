@@ -1,11 +1,10 @@
-import { BlogCreateInput,} from '../routers/input/blog-crete.input';
+import { BlogCreateInput,} from '../api/input/blog-crete.input';
 import { blogCollection } from '../../../db/mongo.db';
 import { Filter, ObjectId, WithId } from 'mongodb';
 import { Blog } from '../domain/blog.type';
-import { PaginatedBlogsDbResultDto } from '../dto/blogs.paginated-db-result.dto';
-import {BlogsQueryInput} from '../routers/input/blogs-query-input';
+import { PaginatedBlogsDbResultDto } from './blogs.paginated-db-result.dto';
+import {BlogsQueryInput} from '../api/input/blogs-query-input';
 import { SortDirection } from '../../../core/types/sort-direction.types';
-import { BlogCreateDto } from '../dto/blog-create.dto';
 import { RepositoryNotFoundError } from '../../../core/errors/repository-not-found.error';
 
 export const blogsRepository = {
@@ -51,7 +50,7 @@ export const blogsRepository = {
     return { _id: insertResult.insertedId, ...newBlog };
   },
 
-  async updateById(id: string, dto:  BlogCreateDto): Promise<void> {
+  async updateById(id: string, dto:  BlogCreateInput): Promise<void> {
     const updateResult = await blogCollection.updateOne(
       { _id: new ObjectId(id) },
       {

@@ -4,9 +4,9 @@ import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithParams, RequestWithQuery } from '../../../../core/types/request-types.types';
 import { blogsService } from '../../ application/blogs.service';
 import { postsService } from '../../../posts/application/posts.service';
-import { PostListPaginatedOutput } from '../../../posts/routers/output/post-list-paginated.output';
-import { PostsQueryInput } from '../../../posts/routers/input/posts-query-input';
-import { mapToPostListPaginatedOutput } from '../../../posts/routers/mappers/map-post-list-paginated-output.util';
+import { PostListPaginatedOutput } from '../../../posts/api/output/post-list-paginated.output';
+import { PostsQueryInput } from '../../../posts/api/input/posts-query-input';
+import { mapToPostListPaginatedOutput } from '../../../posts/api/mappers/map-post-list-paginated-output.util';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 

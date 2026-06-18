@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { Post } from '../domain/post.type';
+import { Post } from '../../domain/post.type';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
 import { PostOutput } from '../output/post.output';
 

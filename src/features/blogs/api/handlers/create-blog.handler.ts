@@ -6,7 +6,6 @@ import { BlogCreateInput } from '../input/blog-crete.input';
 import { BlogOutput } from '../output/blog.output';
 import { blogsService } from '../../ application/blogs.service';
 import { matchedData } from 'express-validator/lib/matched-data';
-import { BlogCreateDto } from '../../dto/blog-create.dto';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const createBlogHandler = async (
@@ -19,7 +18,7 @@ export const createBlogHandler = async (
       includeOptionals: true,
     });
 
-    const dto: BlogCreateDto = {  
+    const dto: BlogCreateInput = {  
       name: sanitizedInput.name,
       description: sanitizedInput.description,
       websiteUrl: sanitizedInput.websiteUrl,

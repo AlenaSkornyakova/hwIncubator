@@ -1,6 +1,6 @@
 import { Collection, Db, MongoClient } from 'mongodb';
 import { Blog } from '../features/blogs/domain/blog.type';
-import { Post } from '../features/posts/routers/domain/post.type';
+import { Post } from '../features/posts/domain/post.type';
 
 const BLOG_COLLECTION_NAME = 'blogs';
 const POSTS_COLLECTION_NAME = 'posts';

@@ -1,5 +1,5 @@
-import { BlogOutput } from '../../src/features/blogs/routers/output/blog.output';
-import { PostOutput } from '../../src/features/posts/routers/output/post.output';
+import { BlogOutput } from '../../src/features/blogs/api/output/blog.output';
+import { PostOutput } from '../../src/features/posts/api/output/post.output';
 
 const expectMongoObjectId = (id: string) => {
   expect(id).toMatch(/^[a-f\d]{24}$/i);

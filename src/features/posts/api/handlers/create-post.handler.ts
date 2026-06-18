@@ -6,7 +6,6 @@ import { RequestWithBody } from '../../../../core/types/request-types.types';
 import { mapToPostOutput } from '../mappers/map-post-output.util';
 import { postsService } from '../../application/posts.service';
 import { matchedData } from 'express-validator/lib/matched-data';
-import { PostCreateDto } from '../../dto/post-create.dto';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const createPostHandler = async (
@@ -19,7 +18,7 @@ export const createPostHandler = async (
       includeOptionals: true,
     });
 
-    const dto: PostCreateDto = {
+    const dto: PostCreateInput = {
       title: sanitizedInput.title,
       shortDescription: sanitizedInput.shortDescription,
       content: sanitizedInput.content,

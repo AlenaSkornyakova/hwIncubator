@@ -2,13 +2,12 @@ import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithParams, RequestWithBody } from '../../../../core/types/request-types.types';
 import { postsService } from '../../../posts/application/posts.service';
-import { PostByBlogIdCreateInput } from '../../../posts/routers/input/post-by-blog-id-create.input';
-import { mapToPostOutput } from '../../../posts/routers/mappers/map-post-output.util';
+import { PostByBlogIdCreateInput } from '../../../posts/api/input/post-by-blog-id-create.input';
+import { mapToPostOutput } from '../../../posts/api/mappers/map-post-output.util';
 import { matchedData } from 'express-validator/lib/matched-data';
-import { PostCreateDto } from '../../../posts/dto/post-create.dto';
+
 import { errorsHandler } from '../../../../core/errors/errors.handler';
-import { PostCreateForBlogDto } from '../../../posts/dto/post-create-for-blog.dto';
-import { PostOutput } from '../../../posts/routers/output/post.output';
+import { PostOutput } from '../../../posts/api/output/post.output';
 
 export const createPostByBlogIdHandler = async (
   req: RequestWithParams<{ id: string }> & RequestWithBody<PostByBlogIdCreateInput>,
@@ -19,7 +18,7 @@ export const createPostByBlogIdHandler = async (
       locations: ['body'],
       includeOptionals: true,
     });
-    const dto: PostCreateForBlogDto = {
+    const dto: PostByBlogIdCreateInput = {
       title: sanitizedInput.title,
       shortDescription: sanitizedInput.shortDescription,
       content: sanitizedInput.content,

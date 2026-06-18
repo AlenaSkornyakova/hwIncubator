@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { HTTP_STATUSES, HttpStatusType } from '../../src/core/utils/http-status';
 import { routerPath } from '../../src/core/paths/paths';
-import { BlogCreateInput } from '../../src/features/blogs/routers/input/blog-crete.input';
-import { PostCreateInput } from '../../src/features/posts/routers/input/post-create.input';
+import { BlogCreateInput } from '../../src/features/blogs/api/input/blog-crete.input';
+import { PostCreateInput } from '../../src/features/posts/api/input/post-create.input';
 import { generateBasicAuthHeader } from './generateBasicAuthHeader';
 import { TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD } from '../config/admin-credentials';
 

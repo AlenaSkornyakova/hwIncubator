@@ -1,11 +1,11 @@
-import { Post } from '../routers/domain/post.type';
+import { Post } from '../domain/post.type';
 import { WithId, ObjectId, Filter } from 'mongodb';
 import { postCollection } from '../../../db/mongo.db';
-import { PostsQueryInput } from '../routers/input/posts-query-input';
-import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
+import { PostsQueryInput } from '../api/input/posts-query-input';
+import { PaginatedPostsDbResultDto } from './posts.paginated-db-result.dto';
 import { SortDirection } from '../../../core/types/sort-direction.types';
-import { PostCreateDto } from '../dto/post-create.dto';
 import { RepositoryNotFoundError } from '../../../core/errors/repository-not-found.error';
+import { PostCreateInput } from '../api/input/post-create.input';
 
 export const postsRepository = {
   async findMany(
@@ -54,7 +54,7 @@ export const postsRepository = {
     return { _id: insertResult.insertedId, ...newPost };
   },
 
-  async update(id: string, dto: PostCreateDto): Promise<void> {
+  async update(id: string, dto: PostCreateInput): Promise<void> {
     const updateResult = await postCollection.updateOne(
       { _id: new ObjectId(id) },
       {
