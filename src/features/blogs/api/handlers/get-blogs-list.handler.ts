@@ -4,7 +4,7 @@ import { HTTP_STATUSES } from '../../../../core/utils/http-status';
 import { RequestWithQuery } from '../../../../core/types/request-types.types';
 import { blogsService } from '../../ application/blogs.service';
 import { BlogsQueryInput } from '../input/blogs-query-input';
-import { BlogListPaginatedOutput } from '../output/blog-list-paginated-output';
+import { BlogListPaginatedOutput } from '../output/blog-list-paginated.output';
 import { mapToBlogListPaginatedOutput } from '../mappers/map-blog-list-paginated-output.util';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
