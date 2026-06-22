@@ -5,7 +5,7 @@ import { errorsHandler } from '../../../../core/errors/errors.handler';
 import { UserCreateInput } from '../input/user-create.input';
 import { UserOutput } from '../output/user.output';
 import { usersService } from '../../application/users.service';
-import { usersQwRepository } from '../../infrastructure/users.query.repository';
+import { usersQueryRepository } from '../../infrastructure/users.query.repository';
 
 export const createUserHandler = async (
   req: RequestWithBody<UserCreateInput>,
@@ -23,7 +23,7 @@ export const createUserHandler = async (
       email: req.body.email,
     };
     const userId = await usersService.create(dto);
-    const createdUser = await usersQwRepository.findById(userId);
+    const createdUser = await usersQueryRepository.findById(userId);
 
     if (!createdUser) {
       throw new Error('Created user cannot be loaded after creation');
