@@ -4,7 +4,6 @@ import { userCollection } from '../../../db/mongo.db';
 import { RepositoryNotFoundError } from '../../../core/errors/repository-not-found.error';
 
 export const usersRepository = {
-  
   async create(user: User): Promise<string> {
     const newUser = await userCollection.insertOne({ ...user });
     if (!newUser.insertedId) {
@@ -30,5 +29,10 @@ export const usersRepository = {
     const deleteResult = await userCollection.deleteOne({ _id: new ObjectId(id) });
     return deleteResult.deletedCount === 1;
   },
-
+  
+  async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<User> | null> {
+    return userCollection.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
+  },
 };

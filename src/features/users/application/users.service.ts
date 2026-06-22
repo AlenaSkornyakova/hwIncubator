@@ -2,15 +2,27 @@ import { UserCreateInput } from '../api/input/user-create.input';
 import { User } from '../domain/user.type';
 import { usersRepository } from '../infrastructure/users.repository';
 import { bcryptService } from '../../../auth/adapters/bcrypt.service';
+import { DomainError } from '../../../core/errors/domain.error';
 
 export const usersService = {
-  
   async create(dto: UserCreateInput): Promise<string> {
-    const passwordHash = await bcryptService.generateHash(dto.password);
+    const { login, email, password } = dto;
+
+    const existingUserByLogin = await usersRepository.findByLoginOrEmail(login);
+    if (existingUserByLogin) {
+      throw new DomainError('Login already exists', 'LOGIN_ALREADY_EXISTS', 'login', 400);
+    }
+
+    const existingUserByEmail = await usersRepository.findByLoginOrEmail(email);
+    if (existingUserByEmail) {
+      throw new DomainError('Email already exists', 'EMAIL_ALREADY_EXISTS', 'email', 400);
+    }
+
+    const passwordHash = await bcryptService.generateHash(password);
 
     const newUser: User = {
-      login: dto.login,
-      email: dto.email,
+      login,
+      email,
       passwordHash,
       createdAt: new Date(),
     };
