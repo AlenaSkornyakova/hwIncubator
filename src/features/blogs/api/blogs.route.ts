@@ -8,12 +8,12 @@ import { updateBlogHandler } from './handlers/update-blog.handler';
 import { deleteBlogHandler } from './handlers/delete-blog.handler';
 import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation-result.middleware';
 import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
-import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
+import { superAdminGuardMiddleware } from '../../../auth/api/middlewares/super-admin.guard-middleware';
 import { createPostByBlogIdHandler } from './handlers/create-post-by-blogId.handler';
-import { createPostForBlogInputValidation } from '../../posts/api/middlewares/post-input-dto-validation.middleware';
+import { createPostForBlogInputValidation } from '../../posts/api/middlewares/post-input-validation.middleware';
 import { paginationAndSortingValidation } from '../../../core/middlewares/query-pagination-sorting.validation-middleware';
 import { blogSortFields } from './input/blog-sort-fields';
-import { blogCreateInputValidation, blogUpdateInputValidation } from '../api/middlewares/blog-input-dto-validation.middleware';
+import { blogCreateInputValidation, blogUpdateInputValidation } from './middlewares/blog-input-validation.middleware';
 import { postSortFields } from '../../posts/api/input/posts-sort-fields';
 import { blogQueryValidation } from '../../blogs/api/middlewares/blog-query-validation.middleware';
 

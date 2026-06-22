@@ -13,16 +13,16 @@ export const getUsersListHandler = async (
   res: Response<UsersListPaginatedOutput>,
 ) => {
   try {
-    // const sanitizedQuery = matchedData<Partial<UsersQueryInput>>(req, {
-    //   locations: ['query'],
-    //   includeOptionals: true,
-    // });
+    const sanitizedQuery = matchedData<Partial<UsersQueryInput>>(req, {
+      locations: ['query'],
+      includeOptionals: true,
+    });
 
     const dto: Partial<UsersQueryInput> = {
-      pageNumber: req.query.pageNumber,
-      pageSize: req.query.pageSize,
-      sortBy: req.query.sortBy,
-      sortDirection: req.query.sortDirection,
+      pageNumber: sanitizedQuery.pageNumber,
+      pageSize: sanitizedQuery.pageSize,
+      sortBy: sanitizedQuery.sortBy,
+      sortDirection: sanitizedQuery.sortDirection,
     };
     const queryInput: UsersQueryInput =
       setDefaultSortAndPaginationIfNotExist<UsersQueryInput['sortBy']>(dto);  

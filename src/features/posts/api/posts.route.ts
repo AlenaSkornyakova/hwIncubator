@@ -5,9 +5,9 @@ import { getPostByIdHandler } from './handlers/get-post-by-id.handler';
 import { updatePostHandler } from './handlers/update-post.handler';
 import { deletePostHandler } from './handlers/delete-post.handler';
 import { inputValidationResultMiddleware } from '../../../core/middlewares/input-validation-result.middleware';
-import { postCreateInputValidation, postUpdateInputValidation } from './middlewares/post-input-dto-validation.middleware';
+import { postCreateInputValidation, postUpdateInputValidation } from './middlewares/post-input-validation.middleware';
 import { paramsIdValidation } from '../../../core/middlewares/params-id.validation.middleware';
-import { superAdminGuardMiddleware } from '../../../auth/midddlewares/super-admin.guard-middleware';
+import { superAdminGuardMiddleware } from '../../../auth/api/middlewares/super-admin.guard-middleware';
 import { paginationAndSortingValidation } from '../../../core/middlewares/query-pagination-sorting.validation-middleware';
 import { postSortFields } from './input/posts-sort-fields';
 

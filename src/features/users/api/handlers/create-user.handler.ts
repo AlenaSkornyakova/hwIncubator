@@ -6,22 +6,23 @@ import { UserCreateInput } from '../input/user-create.input';
 import { UserOutput } from '../output/user.output';
 import { usersService } from '../../application/users.service';
 import { usersQueryRepository } from '../../infrastructure/users.query.repository';
+import { matchedData } from 'express-validator/lib/matched-data';
 
 export const createUserHandler = async (
   req: RequestWithBody<UserCreateInput>,
   res: Response<UserOutput>,
 ) => {
   try {
-    // const sanitizedInput = matchedData<UserCreateInput>(req, {
-    //   locations: ['body'],
-    //   includeOptionals: true,
-    // });
+    const sanitizedInput = matchedData<UserCreateInput>(req, {
+      locations: ['body'],
+      includeOptionals: true,
+    });
 
-    const dto: UserCreateInput = {
-      login: req.body.login,
-      password: req.body.password,
-      email: req.body.email,
-    };
+      const dto: UserCreateInput = {
+        login: sanitizedInput.login,
+        password: sanitizedInput.password,
+        email: sanitizedInput.email,
+      };
     const userId = await usersService.create(dto);
     const createdUser = await usersQueryRepository.findById(userId);
 
@@ -32,7 +33,6 @@ export const createUserHandler = async (
     
   } catch (error) {
     console.error('Create user failed:', error);
-
     return errorsHandler(error, res);
   }
 };
