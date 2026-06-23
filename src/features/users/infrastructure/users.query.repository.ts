@@ -13,20 +13,27 @@ export const usersQueryRepository = {
     return user ? mapToUserOutput(user) : null;
   },
 
-  async findMany(
-    query: UsersQueryInput,
-  ): Promise<UsersListPaginatedOutput> {
+  async findMany(query: UsersQueryInput): Promise<UsersListPaginatedOutput> {
     const { sortBy, sortDirection, pageSize, pageNumber } = query;
     const skip = (pageNumber - 1) * pageSize;
     const filter: Filter<User> = {};
+    const searchConditions: Filter<User>[] = [];
 
     if (query.searchLoginTerm) {
-      filter.login = { $regex: query.searchLoginTerm, $options: 'i' };
-    }
-    if (query.searchEmailTerm) {
-      filter.email = { $regex: query.searchEmailTerm, $options: 'i' };
-    }
-  
+    searchConditions.push({
+      login: { $regex: query.searchLoginTerm, $options: 'i' },
+    });
+  }
+
+  if (query.searchEmailTerm) {
+    searchConditions.push({
+      email: { $regex: query.searchEmailTerm, $options: 'i' },
+    });
+  }
+
+  if (searchConditions.length > 0) {
+    filter.$or = searchConditions;
+  }
     const sortField = sortBy === 'id' ? '_id' : sortBy;
     const items = await userCollection
       .find(filter)
