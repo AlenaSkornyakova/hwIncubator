@@ -25,8 +25,8 @@ export async function connectToDb(url: string, dbName: string): Promise<void> {
     await db.command({ ping: 1 });
 
 // Даже если два запроса пришли одновременно, если service не успел проверить. MongoDB всё равно не даст записать дубликат.
-    await userCollection.createIndex({ email: 1 }, { unique: true });
-    await userCollection.createIndex({ login: 1 }, { unique: true });
+    // await userCollection.createIndex({ email: 1 }, { unique: true });
+    // await userCollection.createIndex({ login: 1 }, { unique: true });
     console.log('✅ Connected to the database');
   } catch (e) {
     await client.close();
