@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { matchedData } from 'express-validator/lib/matched-data';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithParams, RequestWithQuery } from '../../../../core/types/request-types.types';
+import { RequestWithParamsAndQuery} from '../../../../core/types/request-types.types';
 import { blogsService } from '../../ application/blogs.service';
 import { postsService } from '../../../posts/application/posts.service';
 import { PostListPaginatedOutput } from '../../../posts/api/output/post-list-paginated.output';
@@ -11,7 +11,7 @@ import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const getPostsByBlogIdHandler = async (
-  req: RequestWithParams<{ id: string }> & RequestWithQuery<PostsQueryInput>,
+  req: RequestWithParamsAndQuery<{ id: string }, Partial<PostsQueryInput>>,
   res: Response<PostListPaginatedOutput>,
 ) => {
   try {

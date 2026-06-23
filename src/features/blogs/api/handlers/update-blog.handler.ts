@@ -1,13 +1,13 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithBody, RequestWithParams } from '../../../../core/types/request-types.types';
+import { RequestWithParamsAndBody } from '../../../../core/types/request-types.types';
 import { blogsService } from '../../ application/blogs.service';
 import { BlogUpdateInput } from '../input/blog-update.input';
 import { matchedData } from 'express-validator/lib/matched-data';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 
 export const updateBlogHandler = async (
-  req: RequestWithParams<{ id: string }> & RequestWithBody<BlogUpdateInput>,
+  req: RequestWithParamsAndBody<{ id: string }, BlogUpdateInput>,
   res: Response,
 ) => {
   try {

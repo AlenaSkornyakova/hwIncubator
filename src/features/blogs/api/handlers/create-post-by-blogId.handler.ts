@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { HTTP_STATUSES } from '../../../../core/utils/http-status';
-import { RequestWithParams, RequestWithBody } from '../../../../core/types/request-types.types';
+import { RequestWithParamsAndBody } from '../../../../core/types/request-types.types';
 import { postsService } from '../../../posts/application/posts.service';
 import { PostByBlogIdCreateInput } from '../../../posts/api/input/post-by-blog-id-create.input';
 import { mapToPostOutput } from '../../../posts/api/mappers/map-post-output.util';
@@ -10,7 +10,7 @@ import { errorsHandler } from '../../../../core/errors/errors.handler';
 import { PostOutput } from '../../../posts/api/output/post.output';
 
 export const createPostByBlogIdHandler = async (
-  req: RequestWithParams<{ id: string }> & RequestWithBody<PostByBlogIdCreateInput>,
+  req: RequestWithParamsAndBody<{ id: string }, PostByBlogIdCreateInput>,
   res: Response <PostOutput>, 
 ) => {
   try {
