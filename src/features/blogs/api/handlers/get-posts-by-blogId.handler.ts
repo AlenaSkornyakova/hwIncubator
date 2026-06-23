@@ -21,24 +21,15 @@ export const getPostsByBlogIdHandler = async (
     });
     const queryInput =
       setDefaultSortAndPaginationIfNotExist<PostsQueryInput['sortBy']>(sanitizedQuery);
-
     const blogId = req.params.id;
-    // проверка существования блога
-    const blog = await blogsService.findById(blogId);
-
-    if (!blog) {
-      return errorsHandler(new Error('Blog not found'), res);
-    }
-
+    await blogsService.findByIdOrFail(blogId);
     const { items, totalCount } = await postsService.findMany(queryInput, blogId);
-
     const output = mapToPostListPaginatedOutput(
       items, 
       queryInput.pageNumber,
       queryInput.pageSize,
       totalCount,
     );
-
     return res.status(HTTP_STATUSES.OK_200).json(output);
   } catch (error) {
     console.error('Get posts by blog ID failed:', error);
