@@ -8,6 +8,7 @@ import { getUsersListHandler } from './handlers/get-users-list.handler';
 import { userCreateInputValidation } from './middlewares/user-input-validation.middleware';
 import { createUserHandler } from './handlers/create-user.handler';
 import { deleteUserHandler } from './handlers/delete-user.handler';
+import { userQueryValidation } from '../../posts/api/middlewares/user-query-validation.middleware';
 
 export const usersRouter = express.Router();
 
@@ -16,6 +17,7 @@ usersRouter
     '/',
     superAdminGuardMiddleware,
     paginationAndSortingValidation(userSortFields),
+    userQueryValidation,
     inputValidationResultMiddleware,
     getUsersListHandler,
   )
