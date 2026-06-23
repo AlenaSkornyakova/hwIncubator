@@ -8,10 +8,11 @@ import { Filter } from 'mongodb';
 import { User } from '../domain/user.type';
 
 export const usersQueryRepository = {
-  async findById(id: string): Promise<UserOutput | null> {
-    const user = await userCollection.findOne({ _id: new ObjectId(id) });
-    return user ? mapToUserOutput(user) : null;
-  },
+ async findById(id: string): Promise<UserOutput | null> {
+  if (!ObjectId.isValid(id)) return null;
+  const user = await userCollection.findOne({ _id: new ObjectId(id) });
+  return user ? mapToUserOutput(user) : null;
+},
 
   async findMany(query: UsersQueryInput): Promise<UsersListPaginatedOutput> {
     const { sortBy, sortDirection, pageSize, pageNumber } = query;
