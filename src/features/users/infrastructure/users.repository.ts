@@ -25,11 +25,20 @@ export const usersRepository = {
     return user;
   },
 
-  async delete(id: string): Promise<boolean> {
-    const deleteResult = await userCollection.deleteOne({ _id: new ObjectId(id) });
-    return deleteResult.deletedCount === 1;
+  async deleteById(id: string): Promise<void> {
+    if (!ObjectId.isValid(id)) {
+      throw new RepositoryNotFoundError('User not exist');
+    }
+
+    const deleteResult = await userCollection.deleteOne({
+      _id: new ObjectId(id),
+    });
+
+    if (deleteResult.deletedCount === 0) {
+      throw new RepositoryNotFoundError('User not exist');
+    }
   },
-  
+
   async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<User> | null> {
     return userCollection.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
