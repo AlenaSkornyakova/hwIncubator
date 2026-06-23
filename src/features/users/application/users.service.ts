@@ -30,8 +30,8 @@ export const usersService = {
     return newUserId;
   },
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<void> {
     await usersRepository.findByIdOrFail(id);
-    return await usersRepository.delete(id);
+    await usersRepository.deleteById(id);
   },
 };
