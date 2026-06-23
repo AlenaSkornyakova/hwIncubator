@@ -1,13 +1,13 @@
-import { PostCreateInput } from '../routers/input/post-create.input';
-import { postsRepository } from '../repositories/posts-db.repository';
+import { postsRepository } from '../infrastructure/posts-db.repository';
 import { WithId } from 'mongodb';
-import { Post } from '../routers/domain/post.type';
-import { PaginatedPostsDbResultDto } from '../dto/posts.paginated-db-result.dto';
-import { PostsQueryInput } from '../routers/input/posts-query-input';
-import { blogsRepository } from '../../blogs/repositories/blogs-db.repository';
-import { PostCreateDto } from '../dto/post-create.dto';
+import { Post } from '../domain/post.type';
+import { PaginatedPostsDbResultDto } from '../infrastructure/posts.paginated-db-result.dto';
+import { PostsQueryInput } from '../api/input/posts-query-input';
+import { blogsRepository } from '../../blogs/infrastructure/blogs-db.repository';
 import { DomainError } from '../../../core/errors/domain.error';
-import { PostCreateForBlogDto } from '../dto/post-create-for-blog.dto';
+import { PostByBlogIdCreateInput } from '../api/input/post-by-blog-id-create.input';
+import { PostCreateInput } from '../api/input/post-create.input';
+import { PostUpdateInput } from '../api/input/post-update.input';
 
 
 
@@ -24,7 +24,7 @@ export const postsService = {
     return await postsRepository.findByIdOrFail(id);
   },
 
-  async create(dto: PostCreateDto): Promise<WithId<Post>> {
+  async create(dto: PostCreateInput): Promise<WithId<Post>> {
     const blog = await blogsRepository.findById(dto.blogId);
     if (!blog) {
     throw new DomainError(
@@ -47,7 +47,7 @@ export const postsService = {
   },
   async createForBlog(
   blogId: string,
-  dto: PostCreateForBlogDto,
+  dto: PostByBlogIdCreateInput,
 ): Promise<WithId<Post>> {
   const blog = await blogsRepository.findByIdOrFail(blogId);
 
@@ -63,7 +63,7 @@ export const postsService = {
   return postsRepository.create(newPost);
 },
 
-  async updateById(id: string, dto: PostCreateDto): Promise<void> {
+  async updateById(id: string, dto: PostUpdateInput): Promise<void> {
     return await postsRepository.update(id, dto);
   },
 

@@ -1,1 +1,0 @@
-type BlogIdSource = 'body' | 'params';

@@ -1,0 +1,33 @@
+import { Response } from 'express';
+import { HTTP_STATUSES } from '../../../../core/utils/http-status';
+import { RequestWithParamsAndBody } from '../../../../core/types/request-types.types';
+import { postsService } from '../../../posts/application/posts.service';
+import { PostByBlogIdCreateInput } from '../../../posts/api/input/post-by-blog-id-create.input';
+import { mapToPostOutput } from '../../../posts/api/mappers/map-post-output.util';
+import { matchedData } from 'express-validator/lib/matched-data';
+
+import { errorsHandler } from '../../../../core/errors/errors.handler';
+import { PostOutput } from '../../../posts/api/output/post.output';
+
+export const createPostByBlogIdHandler = async (
+  req: RequestWithParamsAndBody<{ id: string }, PostByBlogIdCreateInput>,
+  res: Response <PostOutput>, 
+) => {
+  try {
+    const sanitizedInput = matchedData<PostByBlogIdCreateInput>(req, {
+      locations: ['body'],
+      includeOptionals: true,
+    });
+    const dto: PostByBlogIdCreateInput = {
+      title: sanitizedInput.title,
+      shortDescription: sanitizedInput.shortDescription,
+      content: sanitizedInput.content,
+    };
+    const blogId = req.params.id;
+    const createdPost = await postsService.createForBlog(blogId, dto);
+    return res.status(HTTP_STATUSES.CREATED_201).json(mapToPostOutput(createdPost));
+  } catch (error) {
+    console.error('Create post by blog ID failed:', error);
+    return errorsHandler(error, res);
+  }
+};

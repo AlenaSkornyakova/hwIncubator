@@ -3,5 +3,6 @@ export class RepositoryNotFoundError extends Error {
     super(message);
 
     this.name = 'RepositoryNotFoundError';
+    Object.setPrototypeOf(this, RepositoryNotFoundError.prototype);
   }
 }

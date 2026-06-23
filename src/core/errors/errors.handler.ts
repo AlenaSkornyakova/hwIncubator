@@ -3,20 +3,25 @@ import { DomainError } from './domain.error';
 import { RepositoryNotFoundError } from './repository-not-found.error';
 import { HTTP_STATUSES } from '../utils/http-status';
 
-export function errorsHandler(
-  error: unknown,
-  res: Response,
-): Response {
-  if (error instanceof RepositoryNotFoundError) {
+export function errorsHandler(error: unknown, res: Response): Response {
+  if (
+    error instanceof RepositoryNotFoundError ||
+    (error instanceof Error && error.name === 'RepositoryNotFoundError')
+  ) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
   }
 
-  if (error instanceof DomainError) {
-    return res.status(error.statusCode).json({
+  if (
+    error instanceof DomainError ||
+    (error instanceof Error && error.name === 'DomainError')
+  ) {
+    const domainError = error as DomainError;
+
+    return res.status(domainError.statusCode).json({
       errorsMessages: [
         {
-          field: error.field,
-          message: error.message,
+          field: domainError.field,
+          message: domainError.message,
         },
       ],
     });
@@ -24,7 +29,5 @@ export function errorsHandler(
 
   console.error(error);
 
-  return res.sendStatus(
-    HTTP_STATUSES.INTERNAL_SERVER_ERROR_500,
-  );
+  return res.sendStatus(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500);
 }

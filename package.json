@@ -4,25 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "watch": "tsc -w",
-  "dev": "nodemon --inspect dist/src/index.js",
-  "dev:local": "dotenv -e .env.local -- nodemon dist/src/index.js",
-  "jest": "jest -i",
-  "lint": "eslint --fix .",
-  "format": "prettier --write .",
-  "build": "tsc"
-},
+    "watch": "tsc -w",
+    "dev": "nodemon --inspect dist/src/index.js",
+    "dev:local": "dotenv -e .env.local -- nodemon dist/src/index.js",
+    "jest": "jest -i",
+    "lint": "eslint --fix .",
+    "format": "prettier --write .",
+    "build": "tsc"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.24.0",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.4",
     "express": "^4.22.1",
     "express-validator": "^7.3.1",
     "mongodb": "^7.1.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^4.17.25",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.2",
