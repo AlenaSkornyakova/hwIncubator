@@ -18,22 +18,23 @@ export const usersQueryRepository = {
     const skip = (pageNumber - 1) * pageSize;
     const filter: Filter<User> = {};
     const searchConditions: Filter<User>[] = [];
+    const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     if (query.searchLoginTerm) {
-    searchConditions.push({
-      login: { $regex: query.searchLoginTerm, $options: 'i' },
-    });
-  }
+      searchConditions.push({
+        login: { $regex: escapeRegExp(query.searchLoginTerm), $options: 'i' },
+      });
+    }
 
-  if (query.searchEmailTerm) {
-    searchConditions.push({
-      email: { $regex: query.searchEmailTerm, $options: 'i' },
-    });
-  }
+    if (query.searchEmailTerm) {
+      searchConditions.push({
+        email: { $regex: escapeRegExp(query.searchEmailTerm), $options: 'i' },
+      });
+    }
 
-  if (searchConditions.length > 0) {
-    filter.$or = searchConditions;
-  }
+    if (searchConditions.length > 0) {
+      filter.$or = searchConditions;
+    }
     const sortField = sortBy === 'id' ? '_id' : sortBy;
     const items = await userCollection
       .find(filter)
@@ -52,4 +53,3 @@ export const usersQueryRepository = {
     };
   },
 };
-
