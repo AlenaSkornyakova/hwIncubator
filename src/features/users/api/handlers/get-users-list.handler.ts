@@ -22,10 +22,17 @@ export const getUsersListHandler = async (
       pageNumber: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
       sortBy: sanitizedQuery.sortBy,
-      sortDirection: sanitizedQuery.sortDirection,
+      sortDirection: sanitizedQuery.sortDirection
     };
-    const queryInput: UsersQueryInput =
-      setDefaultSortAndPaginationIfNotExist<UsersQueryInput['sortBy']>(dto);  
+   const normalizedPagination =
+      setDefaultSortAndPaginationIfNotExist<UsersQueryInput['sortBy']>(dto);
+
+    const queryInput: UsersQueryInput = {
+      ...normalizedPagination,
+      searchLoginTerm: sanitizedQuery.searchLoginTerm,
+      searchEmailTerm: sanitizedQuery.searchEmailTerm,
+    };
+
 
     const userListPaginatedOutput = await usersQueryRepository.findMany(queryInput);
     
